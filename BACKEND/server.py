@@ -63,7 +63,7 @@ def loginData():
         #return jsonify({'status': 'failure'})
         return jsonify(success=False)
 
-    print("email : ",email,"  password = " ,password)
+    print("email--- : ",email,"  password = " ,password)
 
     #return jsonify({'status': 'success'})
     #return redirect('/notifications')
