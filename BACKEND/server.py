@@ -206,7 +206,10 @@ def getCrsInfo():
     print("College is : ===>>>>>>>> ::: ",college,dept,course)
     courseName=course.split(' - ')
     print("-----course name is : ",courseName)
-    examiners=dbModel.getRankedExaminer('Data Structures and Algorithms Lab')
+
+    #examiners=dbModel.getRankedExaminer('Data Structures and Algorithms Lab')
+    examiners=dbModel.getRankedExaminer(courseName[1])
+    
     data['examiners']=examiners
     acId=dbModel.getCollegeId(college[0])
     #data['acId']=acId

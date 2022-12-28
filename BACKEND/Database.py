@@ -687,6 +687,7 @@ class DatabaseModel:
             print("In get getRankedExaminer")
             if self.connection!=None:
                 cursor=self.connection.cursor()
+                courseName='%'+courseName+'%'
                 query="select distinct u.usr_id,usr_name,usr_email,e.examiner_id,e.ranking "\
                 " from users u,examiner_courses ec,examiner e where "\
             " e.examiner_id=ec.examiner_id and u.usr_id=e.user_id and usr_active_status=true "\
