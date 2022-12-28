@@ -90,6 +90,7 @@ def loginData():
     #return  render_template('reactView.html')
 
 #()
+
 def makePracDutyObj(list1):
     print("In make prac")
     listShowDuty=[]
@@ -139,6 +140,11 @@ def getAllPraticalList():
     print("list1 iii--->> ",list1)
 
     return json.dumps(list1)
+
+@app.route('/getAdminNtfList')
+def getAdminNtfList():
+    ntfList=dbModel.getAdminNotifications()
+    return json.dumps(ntfList)
 
 @app.route('/data')
 def get_time():
@@ -245,6 +251,35 @@ def sendPracticalDuty():
         'data':data,
     }
     return jsonify(userdata)
+
+app.route('/updateAdminNtf',methods=['POST'])
+def updateAdminNtf():
+    print("in notfication updating")
+    data = request.get_json()
+    print("Notification data is : ",data)
+    # examiner=data['examiner']
+    # college=data['college']
+    # print("\n\n college is : ",college)
+    # collegeId=dbModel.getCollegeId(college[0])
+    # dept=data['deptValue']
+    # courseInfo=data['courseValue']
+    # moreInfo=data['moreInfo']
+
+    # course=courseInfo.split(" - ");
+    # print("pract data send is data is : ",data)
+
+    # print("CollegeId is : ",collegeId)
+    # pracId=dbModel.getPracticalDutyId(collegeId,dept,course[0])
+    # dbModel.savePracticalDuty(pracId,examiner[3],moreInfo)
+
+    # print("\n\n-------------->> pract duty id : ",pracId)
+
+    userdata = {
+        'success':True,
+        'data':data,
+    }
+    return jsonify(userdata)
+
 
 
 @app.route('/userdata', methods=['GET'])
