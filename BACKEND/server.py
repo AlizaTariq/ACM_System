@@ -32,6 +32,7 @@ dbModel.getPracticalDutyId(1,"cs","CS 103")
 
 #dbModel.getRoadMapYears('it')
 #dbModel.generateDuties()
+dbModel.getExaminerName(4)
 
 # print("Roadmap year is")
 # dbModel1.getCollegesList();
@@ -141,10 +142,39 @@ def getAllPraticalList():
 
     return json.dumps(list1)
 
+
+@app.route('/getDutiesList',methods=['GET'])
+def getDutiesList():
+    type=request.args.get("typeduty")
+    if int(type)==4:
+       list2= dbModel.getAllPraticalDuty()
+    else:
+       list2=dbModel.getTypeDutiesList(int(type))
+
+    print("type of duty is : ",type)
+    print("List of pract duty---------------->>>>>",list2)
+    list1=makePracDutyObj(list2)
+    print("list1 iii--->> ",list1)
+    return json.dumps(list1)
+
+
 @app.route('/getAdminNtfList')
 def getAdminNtfList():
     ntfList=dbModel.getAdminNotifications()
-    return json.dumps(ntfList)
+    notifications=[]
+    i=0
+    for list2 in ntfList:
+        list1=[]
+        exm=dbModel.getExaminerName(list2[0])
+        for l1 in list2:
+            list1.append(l1)
+        list1.append(exm[0])
+        notifications.append(list1)
+        
+    print("ntflist-- ",ntfList)
+    print("update ntfList -- ",notifications)
+
+    return json.dumps(notifications)
 
 @app.route('/data')
 def get_time():
@@ -241,14 +271,6 @@ def sendPracticalDuty():
     dbModel.savePracticalDuty(pracId,examiner[3],moreInfo)
 
     print("\n\n-------------->> pract duty id : ",pracId)
-
-
-
-    #examinerId = data['examinerId']
-    #name = data['teacherName']
-    #rank=data['teacherRank']
-    #email=data['teacherEmail']
-    
     userdata = {
         'success':True,
         'data':data,
@@ -260,23 +282,7 @@ def updateAdminNtf():
     print("in notfication updating")
     data = request.get_json()
     print("Notification data is : ",data)
-    # examiner=data['examiner']
-    # college=data['college']
-    # print("\n\n college is : ",college)
-    # collegeId=dbModel.getCollegeId(college[0])
-    # dept=data['deptValue']
-    # courseInfo=data['courseValue']
-    # moreInfo=data['moreInfo']
-
-    # course=courseInfo.split(" - ");
-    # print("pract data send is data is : ",data)
-
-    # print("CollegeId is : ",collegeId)
-    # pracId=dbModel.getPracticalDutyId(collegeId,dept,course[0])
-    # dbModel.savePracticalDuty(pracId,examiner[3],moreInfo)
-
-    # print("\n\n-------------->> pract duty id : ",pracId)
-
+    
     userdata = {
         'success':True,
         'data':data,

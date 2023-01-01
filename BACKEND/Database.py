@@ -27,14 +27,16 @@ class DatabaseModel:
         try:
             if self.connection!=None:
                 cursor=self.connection.cursor()
-                query="Select usr_email,usr_password from users where usr_email=%s and usr_password=%s;"
+                query="select a.admin_id from admin a where a.usr_id IN(Select u.usr_id from users u "\
+					 " where u.usr_id=a.usr_id and u.usr_email "\
+				" =%s and u.usr_password=%s);"
+
                 args=(admin1.email,admin1.password)
                 cursor.execute(query,args)
                 adminData=cursor.fetchall()
                 print("Admin data is : ",adminData)
-                for admin in adminData:
-                     if admin1.email==admin[0] and admin1.password==admin[1] :
-                         return True
+                if(len(adminData)>0):
+                    return True
                 return False
         except Exception as e:
             print("Exception in checkAdminUserExist",str(e))
@@ -237,11 +239,9 @@ class DatabaseModel:
             
             print("Practical Duties are : --->> ",practicalDuties)
             return practicalDuties
-
-
-
         except Exception as e:
             print("Exception in road_map",str(e))
+       
        
     def getCollegeCoursesDutiesTheorey(self,clgId,batchRdSemList,departmentsList,theoreyDuties=[]):
 
@@ -528,6 +528,31 @@ class DatabaseModel:
             if cursor!=None:
                 cursor.close()
 
+
+
+    def getTypeDutiesList(self,status):
+        try:
+            print("\n\nget type duties")
+            if self.connection!=None:
+                cursor=self.connection.cursor()
+                query="select ac_id,rd_dept,rd_year,rd_crs_code,prac_batch_num,prac_duty_status "\
+                " from practical_duty where prac_duty_status=%s"
+                args=(status,)
+                cursor.execute(query,args)
+                dutyList=cursor.fetchall()
+               
+                print("DB All Pract duty list --->" ,dutyList)                
+                return dutyList
+
+        except Exception as e:
+            print("Exception in get All Practical duty list",str(e))
+        finally:
+            if cursor!=None:
+                cursor.close()
+
+
+
+
     def getSemInfo(self,rd_year,crs_code,rd_dept):
         try:
             print("In Roadmap calc")
@@ -742,6 +767,25 @@ class DatabaseModel:
                 if cursor!=None:
                     cursor.close()
 
+
+    def getExaminerName(self,exm_id):
+        try:
+            print("In get admin ntfs")
+            if self.connection!=None:
+                cursor=self.connection.cursor()
+                query="select u.usr_name from users u where "\
+                " u.usr_id=(select e.user_id from examiner e where "\
+								"	e.examiner_id=%s)"
+                args=(exm_id,)
+                cursor.execute(query,args)
+                examiner=cursor.fetchall()
+                print("Examinr name list -->",examiner)
+                return examiner[0]
+        except Exception as e:
+                print("Exception in getting Examinr name",str(e))
+        finally:
+                if cursor!=None:
+                    cursor.close()
 
     def updateAdminNotifications(self,practDutyId):
         try:
