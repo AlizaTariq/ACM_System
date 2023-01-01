@@ -27,7 +27,8 @@ class DatabaseModel:
         try:
             if self.connection!=None:
                 cursor=self.connection.cursor()
-                query="select a.admin_id from admin a where a.usr_id IN(Select u.usr_id from users u "\
+                query="select a.admin_id from admin a where a.usr_id "\
+                " IN(Select u.usr_id from users u "\
 					 " where u.usr_id=a.usr_id and u.usr_email "\
 				" =%s and u.usr_password=%s);"
 
@@ -50,7 +51,8 @@ class DatabaseModel:
         try:
             if self.connection!=None:
                 cursor=self.connection.cursor()
-                query="select ac_id,rd_crs_code,examiner_id from practical_duty where prac_ntf_status=1"
+                query="select ac_id,rd_crs_code,examiner_id from practical_duty "\
+               " where prac_ntf_status=1"
                 cursor.execute(query)
                 adminNotifications=cursor.fetchall()
                 print("Admin Notifications are : ",adminNotifications)
@@ -142,6 +144,8 @@ class DatabaseModel:
         #print("after sems ",sems)
         return batches
 
+#******************************************************
+#******************************************************
 
     def getPracticalCourseCode(self,rdYear,dept,sem):
         try:
@@ -149,7 +153,8 @@ class DatabaseModel:
             if self.connection!=None:
                 cursor=self.connection.cursor()
                 print(rdYear,"  ",dept," --  ",sem)
-                query="select rd_crs_code from roadmap where rd_year=%s and rd_dept=%s and rd_semester=%s and rd_prac_status=1;"
+                query="select rd_crs_code from roadmap where rd_year=%s and "\
+               " rd_dept=%s and rd_semester=%s and rd_prac_status=1;"
                 args=(rdYear,dept,sem)
                 cursor.execute(query,args)
 
@@ -168,7 +173,8 @@ class DatabaseModel:
             if self.connection!=None:
                 cursor=self.connection.cursor()
                 print(rdYear,"  ",dept," --  ",sem)
-                query="select rd_crs_code from roadmap where rd_year=%s and rd_dept=%s and rd_semester=%s and rd_prac_status=0;"
+                query="select rd_crs_code from roadmap where rd_year=%s and "\
+                " rd_dept=%s and rd_semester=%s and rd_prac_status=0;"
                 args=(rdYear,dept,sem)
                 cursor.execute(query,args)
 
@@ -181,6 +187,8 @@ class DatabaseModel:
             if cursor!=None:
                 cursor.close()
 
+#******************************************************
+#******************************************************
 
     def getCollegeDepartment(self,acId):
         try:
@@ -283,13 +291,14 @@ class DatabaseModel:
                     print("\n\nIn Road Map DataBase")
                     if self.connection!=None:
                         cursor=self.connection.cursor()
-                        query="insert into practical_duty(ac_id,rd_dept,rd_year,rd_crs_code,prac_batch_num,prac_duty_status) values(%s,%s,%s,%s,%s,0);"
+                        query="insert into practical_duty(ac_id,rd_dept,rd_year,rd_crs_code, " \
+                        "prac_batch_num,prac_duty_status) values(%s,%s,%s,%s,%s,0);"
                         
-                        dept1=2
-                        if(duty[1]=='cs'):
-                            dept1=1
+                        # dept1=2
+                        # if(duty[1]=='cs'):
+                        #     dept1=1
 
-                        args=(duty[0],dept1,duty[3],crsCode,duty[5])
+                        args=(duty[0],duty[1],duty[3],crsCode,duty[5])
                         cursor.execute(query,args)
                         self.connection.commit()
 
@@ -450,7 +459,8 @@ class DatabaseModel:
             print("\n\nIn Road Map DataBase")
             if self.connection!=None:
                 cursor=self.connection.cursor()
-                query="select distinct rd_year from roadmap where rd_dept=%s order by rd_year desc limit 4;"
+                query="select distinct rd_year from roadmap where rd_dept=%s "\
+                "  order by rd_year desc limit 4;"
                 args=(dept,)
                
                 cursor.execute(query,args)
@@ -516,7 +526,8 @@ class DatabaseModel:
             print("\n\nIn Road Map DataBase")
             if self.connection!=None:
                 cursor=self.connection.cursor()
-                query="select ac_id,rd_dept,rd_year,rd_crs_code,prac_batch_num,prac_duty_status from practical_duty"
+                query="select ac_id,rd_dept,rd_year,rd_crs_code,prac_batch_num,prac_duty_status "\
+                " from practical_duty"
                 cursor.execute(query)
                 pracDutyList=cursor.fetchall()
                
@@ -559,7 +570,8 @@ class DatabaseModel:
             if self.connection!=None:
                 cursor=self.connection.cursor()
                 
-                query="select rd_semester,rd_crs_name from roadmap where rd_year=%s and rd_crs_code=%s and rd_dept=%s and rd_prac_status=1; "
+                query="select rd_semester,rd_crs_name from roadmap where rd_year=%s and "\
+                    " rd_crs_code=%s and rd_dept=%s and rd_prac_status=1; "
                 
                 args=(str(rd_year),str(crs_code),str(rd_dept))
                 cursor.execute(query,args)
@@ -632,12 +644,13 @@ class DatabaseModel:
             print("In get practical duty id ",acId,dept,crsCode)
             if self.connection!=None:
                 cursor=self.connection.cursor()
-                query="select prac_duty_id from practical_duty where ac_id=%s and rd_dept=%s and rd_crs_code=%s;"
-                dept1='1'
-                if dept=="it":
-                    dept1='2'
+                query="select prac_duty_id from practical_duty where "\
+               " ac_id=%s and rd_dept=%s and rd_crs_code=%s;"
+                # dept1='1'
+                # if dept=="it":
+                #     dept1='2'
                 
-                args=(acId,dept1,crsCode)
+                args=(acId,dept,crsCode)
                 cursor.execute(query,args)
                 practId=cursor.fetchall()
                 print("practId Id list -->",practId)
@@ -651,17 +664,18 @@ class DatabaseModel:
 
 
 
-    def getCollegeCourses(self,clgId):
+    def getCollegeCourses(self,clgId,dept):
         try:
-            print("In get All college")
+            print("In get getCollegeCourses ",clgId,dept)
             if self.connection!=None:
                 cursor=self.connection.cursor()
-                query="select distinct rd_crs_code from practical_duty where ac_id=%s"
+                query="select rd_crs_code from practical_duty "\
+                    " where ac_id=%s and rd_dept=%s and prac_duty_status in (0,3) "
 
-                args=(clgId,)
+                args=(clgId,dept)
                 cursor.execute(query,args)
                 courses=cursor.fetchall()
-                #print("courses list -->",courses)
+                print("courses list -->",courses)
                 return courses
         except Exception as e:
                 print("Exception in getting clgName",str(e))
@@ -671,12 +685,13 @@ class DatabaseModel:
 
     def getCollegeCourseInfo(self,rdYear,dept,crs_code):
         try:
-            print("In get All college")
+            print("In get All college====>",rdYear,dept,crs_code)
             if self.connection!=None:
                 cursor=self.connection.cursor()
-                query="select rd_crs_name,rd_crs_code from roadmap where rd_year=%s and rd_dept=%s and rd_crs_code=%sand rd_prac_status=1"
+                query="select rd_crs_name,rd_crs_code from roadmap where"\
+                    " rd_dept=%s and rd_crs_code=%s and rd_prac_status=1"
 
-                args=(rdYear,dept,crs_code)
+                args=(dept,crs_code)
                 cursor.execute(query,args)
                 coursesInfo=cursor.fetchall()
                 print("coursesInfo list -->",coursesInfo)
@@ -694,7 +709,8 @@ class DatabaseModel:
             print("In get All college")
             if self.connection!=None:
                 cursor=self.connection.cursor()
-                query="select distinct rd_year from practical_duty where ac_id=%s and rd_dept=%s"
+                query="select distinct rd_year from practical_duty where ac_id=%s and "\
+                " rd_dept=%s"
                 args=(clgId,dept)
                 cursor.execute(query,args)
                 year=cursor.fetchall()
@@ -756,7 +772,9 @@ class DatabaseModel:
             print("In get admin ntfs")
             if self.connection!=None:
                 cursor=self.connection.cursor()
-                query="select examiner_id,prac_duty_id,prac_duty_status,prac_info,ac_id,rd_crs_code from practical_duty where prac_duty_status in(2,3) and prac_ntf_status=2"
+                query="select examiner_id,prac_duty_id,prac_duty_status,prac_info,ac_id, "\
+                    " rd_crs_code from practical_duty where prac_duty_status in(2,3) and "\
+                        " prac_ntf_status=2"
                 cursor.execute(query)
                 ntfs=cursor.fetchall()
                 print("notification list -->",ntfs)
@@ -793,8 +811,8 @@ class DatabaseModel:
             if self.connection!=None:
                 cursor=self.connection.cursor()
                 query="UPDATE public.practical_duty"\
-	" SET prac_ntf_status=0 "\
-	" WHERE prac_duty_id=%s;"                    
+	            " SET prac_ntf_status=0 "\
+	            " WHERE prac_duty_id=%s;"                    
                 args=(practDutyId,)                    
                 cursor.execute(query,args)
                 self.connection.commit()

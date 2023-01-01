@@ -19,12 +19,15 @@ password=app.config["DB_PASSWORD"],host=app.config["DB_HOST"])
 dbModel= DatabaseModel(app.config["DATABASE"],app.config["DB_USER"],
     app.config["DB_PASSWORD"],app.config["DB_HOST"])
 
-dbModel.getSemInfo('2020','CS 302','it')
-dbModel.getCollegeInfo(3)
-#dbModel.getAllCollege()
-dbModel.getCollegeCourses(1)
-dbModel.getRankedExaminer('Data Structures and Algorithms Lab')
-dbModel.getPracticalDutyId(1,"cs","CS 103")
+# dbModel.getSemInfo('2020','CS 302','it')
+# dbModel.getCollegeInfo(3)
+# #dbModel.getAllCollege()
+# dbModel.getCollegeCourses(1,'cs')
+# dbModel.getRankedExaminer('Data Structures and Algorithms Lab')
+# dbModel.getPracticalDutyId(1,"cs","CS 103")
+
+#dbModel.generateDuties()
+
 #dbModel.getBatchSize(2)
 #dbModel.getCollegeRoadMapYear(1,'1')
 
@@ -98,25 +101,26 @@ def makePracDutyObj(list1):
     for duty in list1:
       list2=[]
       clgInfo=dbModel.getCollegeInfo(duty[0])
-      dept='it'
-      if int(duty[1])==1:
-        dept='cs'    
+    #   dept='it'
+    #   if int(duty[1])==1:
+    #     dept='cs'    
 
-      semCrsInfo=dbModel.getSemInfo(duty[2],duty[3],dept)
+      semCrsInfo=dbModel.getSemInfo(duty[2],duty[3],duty[1])
       print("semCrsInfo ---===> ",semCrsInfo)
 
       #(6, '2 ', '2020', 'CS 302', 5)
-      print("obj-->.",clgInfo[0],clgInfo[5],dept,duty[3],semCrsInfo[1],semCrsInfo[0],duty[4])
+      print("obj-->.",clgInfo[0],clgInfo[5],duty[1],duty[3],semCrsInfo[1],semCrsInfo[0],duty[4])
     #   DisplayDutyObj=DisplayDuty(clgInfo[0],clgInfo[5],dept,duty[3],semCrsInfo[1],semCrsInfo[0]
     #   ,duty[4])
 
       list2.append(clgInfo[0])
       list2.append(clgInfo[5])
-      list2.append(dept)
+      list2.append(duty[1])
       list2.append(duty[3])
       list2.append(semCrsInfo[1]) 
       list2.append(semCrsInfo[0])
       list2.append(duty[4])
+
       if(int(duty[5])==0):
         list2.append("Not Assigned")
       if(int(duty[5])==1):
@@ -254,11 +258,14 @@ def getCrsInfo():
 
 @app.route("/sendPracticalDuty",methods=['POST'])
 def sendPracticalDuty():
+    print("\n\n\n\tIn send practical function")
     data = request.get_json()
+    print("send Practical----pract data send is data is : ",data)
     examiner=data['examiner']
     college=data['college']
+
     print("\n\n college is : ",college)
-    collegeId=dbModel.getCollegeId(college[0])
+    collegeId=dbModel.getCollegeId(college)
     dept=data['deptValue']
     courseInfo=data['courseValue']
     moreInfo=data['moreInfo']
@@ -330,20 +337,17 @@ def api(num):
 def updateCrs():
     clgName = request.args.get("clgname")
     dept1=request.args.get("dept")
-    dept=''
-    if(dept1=="cs"):
-        dept='1'
-    else:
-        dept='2'
-
+   
     #if clgName!=None and len(clgName)!=0:
-    print("seleected value==========> :","   ",clgName,"  department -->>>",dept)
+    print("seleected value==========> :","   ",clgName,"  department -->>>",dept1)
     clgId=dbModel.getCollegeId(clgName)
     print("=================clgIg=",clgId)
-    rdYear=dbModel.getCollegeRoadMapYear(clgId[0],dept)
-    crsList=dbModel.getCollegeCourses(clgId[0])
+    rdYear=dbModel.getCollegeRoadMapYear(clgId[0],dept1)
+    crsList=dbModel.getCollegeCourses(clgId[0],dept1)
+    print("Years are : ",rdYear)
     coursesInfo=[]
     for courseCode in crsList:
+        print("Course is : ",courseCode)
         course1=dbModel.getCollegeCourseInfo(rdYear,dept1,courseCode)
         if course1!=None and len(course1)!=0:
             coursesInfo.append(course1[1]+" - "+course1[0])
