@@ -26,6 +26,9 @@ dbModel= DatabaseModel(app.config["DATABASE"],app.config["DB_USER"],
 # dbModel.getRankedExaminer('Data Structures and Algorithms Lab')
 # dbModel.getPracticalDutyId(1,"cs","CS 103")
 
+#fall spring
+#generate fall drop      
+#spring d
 #dbModel.generateDuties()
 
 #dbModel.getBatchSize(2)
@@ -284,12 +287,14 @@ def sendPracticalDuty():
     }
     return jsonify(userdata)
 
-app.route('/updateAdminNtf',methods=['POST'])
+@app.route('/updateAdminNtf', methods=['POST'])
 def updateAdminNtf():
     print("in notfication updating")
     data = request.get_json()
+    practId=data['practId']
     print("Notification data is : ",data)
-    
+    print("Practical Id is : ",practId)
+    dbModel.updateAdminNotifications(int(practId))
     userdata = {
         'success':True,
         'data':data,
@@ -316,9 +321,10 @@ def fetchData():
     print("data is : ",data)
     username = data['username']
     password = data['password']
-    city = data['city']
-    status = data['status']
-    print(username,password,city,status)
+    # city = data['city']
+    # status = data['status']
+    # print(username,password,city,status)
+    print(username,password)
     return jsonify({'status': 'success'})
 
 
@@ -342,6 +348,7 @@ def updateCrs():
     print("seleected value==========> :","   ",clgName,"  department -->>>",dept1)
     clgId=dbModel.getCollegeId(clgName)
     print("=================clgIg=",clgId)
+
     rdYear=dbModel.getCollegeRoadMapYear(clgId[0],dept1)
     crsList=dbModel.getCollegeCourses(clgId[0],dept1)
     print("Years are : ",rdYear)
@@ -353,11 +360,7 @@ def updateCrs():
             coursesInfo.append(course1[1]+" - "+course1[0])
     
     #print("courses list detail is : ",coursesInfo)
-
     #return jsonify(crsList)
-   
-
-
     return jsonify(coursesInfo)
 
     
