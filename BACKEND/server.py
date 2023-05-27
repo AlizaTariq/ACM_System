@@ -5,13 +5,28 @@ import psycopg2.extras
 from Database import DatabaseModel
 import json
 from Classes import UserAdmin,DisplayDuty
-
+from flask_jwt_extended import create_access_token
+from flask_jwt_extended import get_jwt_identity
+from flask_jwt_extended import jwt_required
+from flask_jwt_extended import JWTManager
+from flask_cors import CORS
+import os
 
 # Initializing flask app
 app = Flask(__name__)
 
+# Setup the Flask-JWT-Extended extension
+#app.config['ENV_FILE'] = "C:\Users\DELL\Desktop\\'Final Year Project'\\'Deployment Code'\\'ACMS SCHEDULING'\.env"
+app.config["JWT_SECRET_KEY"] = os.environ.get('JWT_SECRET')  # Change this!
+jwt = JWTManager(app)
+
+print("secret jwt key = ",app.config["JWT_SECRET_KEY"])
+
 app.config.from_object("config")
 app.secret_key=app.config["SECRET_KEY"]
+CORS(app)
+app.config['CORS_HEADERS'] = 'Content-Type'
+
 
 conn=psycopg2.connect(dbname=app.config["DATABASE"],user=app.config["DB_USER"],
 password=app.config["DB_PASSWORD"],host=app.config["DB_HOST"])
@@ -37,6 +52,7 @@ dbModel= DatabaseModel(app.config["DATABASE"],app.config["DB_USER"],
 #dbModel.getCollegeCourseInfo('2020','cs','CS 103')
 
 #dbModel.getRoadMapYears('it')
+
 #dbModel.generateDuties()
 dbModel.getExaminerName(4)
 
@@ -50,6 +66,22 @@ dbModel.getExaminerName(4)
 #dbModel.getAdminNotifications()
 #dbModel.updateAdminNotifications(859)
 #dbModel.getAdminNotifications()
+
+
+
+# Create a route to authenticate your users and return JWTs. The
+# create_access_token() function is used to actually generate the JWT.
+@app.route("/createToken", methods=["POST"])
+def createToken():
+    email = request.json.get("email", None)
+    password = request.json.get("password", None)
+    if email != "test" or password != "test":
+        return jsonify({"msg": "Bad email or password"}), 401
+
+    access_token = create_access_token(identity=email)
+    return jsonify(access_token=access_token)
+
+
 
 
 @app.route('/listData')
@@ -97,6 +129,27 @@ def loginData():
     #return  render_template('reactView.html')
 
 #()
+
+
+@app.route('/generatePracDuties', methods=['GET'])
+def generatePracDuties():
+    # try:
+    #     dbModel.generateDuties();
+    # except Exception as e:
+    #     print("Exception in genrate duties : ",e) 
+    userdata = {
+        'name': 'John',
+        'age': '43',
+        'status': 'Active',
+        'password': 'ABC123',
+        'email': 'john@example.com'
+    }
+    return jsonify(userdata)
+
+
+    #return jsonify(success=True)
+   
+
 
 def makePracDutyObj(list1):
     print("In make prac")
@@ -167,7 +220,8 @@ def getDutiesList():
 
 @app.route('/getAdminNtfList')
 def getAdminNtfList():
-    ntfList=dbModel.getAdminNotifications()
+    print("admin admin")
+    ntfList=dbModel.getAdminNotificationsPrac()
     notifications=[]
     i=0
     for list2 in ntfList:
@@ -364,6 +418,24 @@ def updateCrs():
     return jsonify(coursesInfo)
 
     
+@app.route("/getTeacherDetail",methods=['GET'])
+def getTeacherDetail():
+    acId=request.args.get("acId")
+    dept=request.args.get("dept")
+    crsCode=request.args.get("crsCode")
+    print("to get teacher ",acId,"--",dept,"--",crsCode)
+    exmId=dbModel.getTeacherId(acId,dept,crsCode)
+    if(exmId[0]==None or len(exmId)==0):
+        print("exm id null")
+        return ({"success":"false",
+                    "examiner":None})
+
+    print("examiner Id is : ",exmId)
+    teacher=dbModel.getTeacherDetail(exmId)
+    print("teacher detail is : ",teacher)
+    return({"success":"true",
+            "examiner":teacher
+    })
 
 # #axios    
 # @app.route('/updateCrs/<selected_value>/', methods=['GET'])
@@ -462,6 +534,163 @@ def fetch_random_vegetables():
     vegetables = ['carrot', 'potato', 'pepper', 'cucumber', 'onion']
     random_vegetables = random.choices(vegetables, k=5)
     return jsonify({'random_vegetables': random_vegetables})
+
+
+
+
+
+###################################################################################
+
+
+@app.route('/getCourseName',methods = ["GET"])
+def getCourseName():
+    List = dbModel.getCoursesName()
+    # print("posting......")
+    # print(List)
+    if List != None:
+        return jsonify(List)
+    return "'key': 'empty'"
+
+
+@app.route('/getDataFromReact',methods=["POST"])
+def setTime():
+    if request.method == 'POST':
+        FileName=request.form['fileName']
+        dataOfFile=request.form['ArrayList']
+        DictionaryOfdata=json.loads(dataOfFile)
+        
+        for e in DictionaryOfdata:
+            dbModel.insertRoadmap(json.dumps(e))
+        DictionaryOfdata[0]
+        # print(f'Posting....{FileName}{DictionaryOfdata[0]}{DictionaryOfdata[0]["rd_crs_code"]}')
+        return "Hello"
+    print('Wrong')
+    return "Hello"
+
+@app.route('/set_data',methods = ["GET"])
+def set_data():
+    List = dbModel.getRoadMapList()
+    print("posting......")
+    #print(List)
+    if List != None:
+        return jsonify(List)
+    return "'key': 'empty'"
+
+@app.route('/send_data', methods=["POST","GET"])
+def send_data():
+    course = None
+    id = request.get_json()
+    course = dbModel.getcourse(id)
+    print(course)
+    if request.method == "POST":
+        return jsonify(course)
+    else:
+        return jsonify(course)
+
+@app.route('/put_data', methods=["GET"])
+def put_data():
+    course = None
+    id = request.get_json()
+    course = dbModel.getcourse(id)
+    print(course)
+    return jsonify(course)
+
+@app.route('/getAllCourses',methods = ["GET","POST"])
+def getAllCourses():
+    department = request.get_json()
+    print(department,int((department['roadMapYear']['SelectedRoadMapYear'])))
+    NameList  = dbModel.getCoursesName((department['department']['selectedValue']).lower(),(department['roadMapYear']['SelectedRoadMapYear']))
+   
+    if NameList != None:
+        return jsonify(NameList)
+    return "'key': 'empty'"
+
+
+@app.route('/click/Accepted')
+def button_click():
+    print(f'Button with ID "" was clicked!')
+    return 'Button clicked!'
+
+@app.route('/click/Rejected')
+def button_reject():
+    print(f'Button with ID "" was clicked!')
+    return 'Reject Button clicked!'
+
+###################SEND EXAMINER DUTY
+
+
+
+@app.route('/sendDuty',methods = ["GET","POST"])
+def sendDuty():
+    data = request.get_json()
+    string = dbModel.SendDuty(data['Id'])
+    if string != None:
+        return "success"
+    return "'key': 'empty'"
+
+@app.route('/createDuty',methods = ["GET","POST"])
+def createDuty():
+    print("In Create app.py")
+    data = request.get_json()
+    List=[]
+    List.append(int(data[0].split("_")[0]))
+    List.append(data[0].split("_")[1])
+    List.append((data[1]).lower())
+    List.append(data[2])
+    List.append(int(data[3].split("_")[0]))
+    List.append(data[3].split("_")[1])
+    id = dbModel.CreateDuty(List)
+    print(id)
+    if id != None:
+        return jsonify(id)
+    return "'key': 'empty'"
+
+@app.route('/getDutyDetail' ,methods = ["GET","POST"])
+def getDutyDetail():
+    print("In getDutyDetail aap.py")
+    data = request.get_json()
+    print("DataID: ",data)
+    List = dbModel.getDuty(data['Id'])
+    print("List: ",List)
+    dutyDetail = dbModel.fetchDutyDetail(List)
+    if dutyDetail != None:
+        return jsonify(dutyDetail)
+    return "'key': 'empty'" 
+
+@app.route('/getNotAssignedDuties' ,methods = ["GET"])
+def getNotAssignedDuties():
+    print("In getAllDuties aap.py")
+    List = dbModel.getNotAssignedDuties()
+    print("List: ",List)
+    if List != None:
+        return jsonify(List)
+    return "'key': 'empty'" 
+
+@app.route('/getAllDuties' ,methods = ["GET"])
+def getAllDuties():
+    print("In getAllDuties aap.py")
+    List = dbModel.getAllDuties()
+    print("List: ",List)
+    if List != None:
+        return jsonify(List)
+    return "'key': 'empty'"
+
+@app.route('/getAllExaminerName',methods = ["GET","POST"])
+def getAllExaminerName():
+    courseName = request.get_json()
+    NameList  = dbModel.getExaminerNameAccordingToCourseSelection(courseName['courseName']['selectedValue'].split("_")[1])
+    if NameList != None:
+        return jsonify(NameList)
+    return "'key': 'empty'"
+
+@app.route('/getAllData', methods =["GET"])
+def getAllData():
+    List =[] 
+    List.append(dbModel.GetCurrentFollowedRoadMapYear())
+    List.append(dbModel.GetDepartments())
+    if List != None:
+        return jsonify(List)
+    return "'key': 'empty'" 
 
 
 

@@ -1,0 +1,263 @@
+.FormBgSP{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  user-select: none;
+}
+
+.bg-imgSP {
+  /*background-repeat: no-repeat;
+  background-attachment: fixed; */
+  /* height: 100%; */
+  /* background-image: url("/src/Static/books2.jpg"); */
+  background-color: #92785e;
+  height: 122vh;
+  background-size: cover;
+  background-position: center;
+}
+.contentSP {
+  margin-top: 0px;
+  border-radius: 10px;
+  position: absolute;
+  background-color: #92785e;
+  top: 62%;
+  left: 50%;
+  z-index: 999;
+  text-align: center;
+  padding: 30px 82px;
+  width: 520px;
+  color: #171d1f;
+  transform: translate(-50%, -50%);
+  /* background-image: url("/src/Static/books3.jpg"); */
+  background-size: cover;
+  /*background-image: url("/src/Static/Light.png");*/
+  backdrop-filter: blur(70px);
+  box-shadow: 0 0 40px 20px rgba(0, 0, 0, 0.26);
+}
+
+header[type="PI"] {
+  color: #171d1f;
+  font-size: 20px;
+  font-weight: 600;
+  margin: 0 0 15px 0;
+  font-family: "Poppins";
+  overflow: hidden;
+  white-space: nowrap;
+  animation: text 6s steps(37) infinite alternate;
+  border-right: 3px solid white;
+
+}
+
+@keyframes text {
+  0% {
+    width: 0ch;
+  }
+
+  50% {
+    width: 38ch;
+  }
+}
+
+
+.fieldSP {
+  position: static;
+  height: 40px;
+  width: 100%;
+  display: flex;
+  background: rgba(255, 255, 255, 0.94);
+}
+
+.fieldSP span {
+  color: #222;
+  width: 40px;
+  line-height: 45px;
+}
+
+.input-boxSP {
+  width: 100%;
+  background: transparent;
+  border: 1px solid #fff;
+  border-style: inset;
+  /* margin: 6px 0; */
+  height: 32px;
+  border-radius: 20px;
+  padding: 0 10px;
+  box-sizing: border-box;
+  outline: none;
+  text-align: center;
+  color: #171d1f;
+}
+
+select {
+  background-color: #1f1e1e;
+  color: #fff;
+  border-radius: 20px;
+}
+
+.fieldSP input {
+  height: 100%;
+  width: 100%;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #222;
+  font-size: 16px;
+  font-family: "Poppins", sans-serif;
+}
+
+.space {
+  margin-top: 16px;
+}
+
+.showSP {
+  position: absolute;
+  /* right: 13px; */
+  padding: 7px 0px 0px 246px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #000000;
+  display: none;
+  cursor: pointer;
+  font-family: "Poppins"
+}
+
+.pass-keySP {
+  width: 100%;
+  background: transparent;
+  border: 1px solid #fff;
+  border-style: inset;
+  /* margin: 6px 0; */
+  height: 32px;
+  border-radius: 20px;
+  padding: 0 10px;
+  box-sizing: border-box;
+  outline: none;
+  text-align: center;
+  color: #fff;
+}
+
+.pass-keySP:valid~.showSP {
+  display: block;
+
+}
+
+.passSP {
+  text-align: left;
+  margin: 2px 0;
+
+}
+
+.passSP a {
+  color: #171d1f;
+  text-decoration: none;
+  font-family: "Poppins";
+  font-size: 19px;
+}
+
+.passSP:hover a {
+  text-decoration: underline;
+}
+
+button {
+  width: 50%;
+  background: rgb(31, 30, 30);
+  border: 1px solid #fff;
+  margin: 8px 0 10px;
+  height: 40px;
+  font-size: 18px;
+  border-radius: 20px;
+  padding: 0 10px;
+  box-sizing: border-box;
+  outline: none;
+  color: #fff;
+  cursor: pointer;
+  font-family: "Poppins";
+  font-weight: 600;
+  transition: 0.3s ease;
+  margin-left: 250px;
+
+}
+
+button[type="submit"]:hover {
+  background: rgb(20, 20, 20);
+}
+
+.fa {
+  float: left;
+}
+
+.maindivSP {
+  display: flex;
+  margin: 12px;
+}
+
+.submit-btnSP {
+  position: relative;
+  width: fit-content;
+  padding-right: 46px;
+}
+
+.submit-btnSP::after {
+  content: "\27a4";
+  color: #333;
+  line-height: 40px;
+  font-size: 20px;
+  height: 40px;
+  width: 40px;
+  border-radius: 50%;
+  background: #fff;
+  position: absolute;
+  right: -1px;
+  top: -1px;
+}
+
+input[type="file"] {
+  width: 100%;
+  background: transparent;
+  border: 1px solid #fff;
+  border-style: inset;
+  /* margin: 6px 0; */
+  height: 32px;
+  border-radius: 20px;
+  padding: 0 10px;
+  box-sizing: border-box;
+  outline: none;
+  text-align: center;
+  color: #fff;
+}
+
+.form-controlSP {
+  background-color: #1f1e1e;
+
+}
+
+.fieldSP input[type="submit"] {
+  background: rgb(31, 30, 30);
+  border: 1px solid black;
+  color: white;
+  font-size: 18px;
+  letter-spacing: 1px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: "Montserrat", sans-serif;
+  transition: .3s ease;
+  border-radius: 20px;
+}
+
+.fieldSP input[type="submit"]:hover {
+  background: rgb(20, 20, 20);
+}
+
+.login {
+  color: white;
+  margin: 20px 0;
+  font-family: "Poppins", sans-serif;
+}
+.headtxtSP{
+  margin-top: 0px;
+  margin-bottom: 15px;
+  color: #171d1f;
+  font-family: "Poppins";
+  font-weight: 900;
+  font-size: 40px;
+}

@@ -1,0 +1,252 @@
+.settings-container {
+    width: 100%;
+    margin: 0 auto;
+    padding: 40px;
+    background-color: #fff;
+    background-image: url("/src/Static/texture11.jpg");
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+  }
+  
+  .settings-container.dark-mode {
+    background-color: #1f1f1f;
+    background-image: url("/src/Static/fabric3.jpg");
+    color: #fff;
+  }
+  
+  h1 {
+    text-align: center;
+    font-size: 3.5rem;
+    margin-bottom: 40px;
+    font-family: Poppins;
+    margin-top: 70px;
+  }
+  
+  form {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  h2 {
+    font-size: 2rem;
+    margin: 20px 0;
+    margin-left: 300px;
+    font-family: Poppins;
+
+  }
+  
+  label {
+    font-size: 1.2rem;
+    margin-bottom: 5px;
+    margin-left: 400px;
+    font-family: Poppins;
+  }
+
+  input[type="texts"],
+  input[type="emails"],
+  input[type="passwords"]{
+    padding: 10px;
+    margin-bottom: 20px;
+    margin-left: 400px;
+    border: 1px solid #1f1f1f;
+    border-radius: 5px;
+    box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.1);
+  }
+
+  input[name="profile-pic"] {
+    max-width: 700px;
+    background: transparent;
+    border: 1px solid #fff;
+    border-style: inset;
+    height: 32px;
+    border-radius: 20px;
+    padding: 0 10px;
+    box-sizing: border-box;
+    outline: none;
+    text-align: center;
+    color: #fff;
+    margin-left: 400px;
+    margin-top: 10px;
+  }
+  
+  .notification {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  
+  .notification input[type="checkbox"] {
+    margin-right: 10px;
+  }
+
+  .notification input[name="email-notif"] {
+    margin-left: 10px;
+  }
+
+  .notification input[name="push-notif"] {
+    margin-left: 10px;
+  }
+  
+  .appearance label {
+    margin-right: 10px;
+  }
+  
+  .appearance input[type="checkbox"] {
+    margin-bottom: 20px;
+  }
+  
+  button[type="submits"] {
+    background-color: #171d1f;;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    margin-top: 20px;
+    cursor: pointer;
+    margin-left: 400px;
+    transition: background-color 0.2s ease;
+    box-shadow: 0 0 20px rgba(0,0,0,0.2);
+    font-family: poppins;
+    border-radius: 50px;
+    height: 50px;
+    width: 500px;
+    border: 2px solid #fff;
+    margin-left: 600px;
+    font-size: 20px;
+    margin-top: 10px;
+  }
+  
+  button[type="submits"]:hover {
+    background: rgb(20, 20, 20);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+  }
+  
+  @media (max-width: 768px) {
+    .settings-container {
+      padding: 20px;
+    }
+  
+    h1 {
+      font-size: 2rem;
+      margin-bottom: 20px;
+    }
+  
+    h2 {
+      font-size: 1.25rem;
+      margin: 10px 0;
+    }
+  
+    label {
+      font-size: 0.875rem;
+    }
+  
+    input[type="texts"],
+    input[type="emails"],
+    input[type="passwords"],
+    input[type="files"] {
+      margin-bottom: 10px;
+    }
+  
+    .notification {
+      margin-bottom: 5px;
+    }
+  
+    button[type="submits"] {
+      margin-top: 10px;
+    }
+  }
+
+  .dark-mode-toggle {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    background-color: #fff;
+    color: #1f1f1f;
+    border: none;
+    border-radius: 50%;
+    box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
+  
+  .dark-mode-toggle:hover {
+    background-color: #1f1f1f;
+    color: #fff;
+  }
+  
+  .dark-mode-toggle:focus {
+    outline: none;
+  }
+  
+  .dark-mode-toggle svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  /* hello */
+
+  .toggle {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+    margin-bottom: 1rem;
+    margin-left: 10px;
+  }
+  
+  .toggle input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+  
+  .slider {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  border-radius: 34px;
+  transition: all 0.3s ease;
+  border: 2px solid #000;
+}
+
+.slider:before {
+position: absolute;
+content: "";
+height: 26px;
+width: 26px;
+left: 4px;
+bottom: 4px;
+background-color: black;
+transition: transform 0.2s;
+border-radius: 50%;
+}
+
+input:checked + .slider:before {
+transform: translateX(26px);
+}
+
+.slider.round {
+border-radius: 34px;
+}
+
+.slider.round:before {
+border-radius: 50%;
+}
+
+/* Dark mode toggle styles */
+.dark-mode-toggle .slider:before {
+background-color: #222;
+}
+
+.dark-mode-toggle input:checked + .slider:before {
+background-color: #fff;
+}

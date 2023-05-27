@@ -3,6 +3,14 @@ import psycopg2.extras
 import datetime
 from Classes import UserAdmin
 
+import smtplib, ssl
+from email.mime.text import MIMEText
+from smtplib import SMTP_SSL as SMTP
+from email.mime.multipart import MIMEMultipart
+from asyncio.windows_events import NULL
+from xml.etree.ElementTree import tostring
+
+
 class DatabaseModel:
     def __init__(self,database,user,password,host):
         self.host=host
@@ -50,6 +58,7 @@ class DatabaseModel:
     def getAdminNotifications(self):
         try:
             if self.connection!=None:
+                print("addddddddddddddmin ntffffffffffff")
                 cursor=self.connection.cursor()
                 query="select ac_id,rd_crs_code,examiner_id from practical_duty "\
                " where prac_ntf_status=1"
@@ -316,6 +325,7 @@ class DatabaseModel:
     def generateDuties(self):
         collegesList=self.getCollegesList();
         print("\n\ncollege List --> ",collegesList)
+        #---------------------------------------------
         roadMapYearCS=self.getRoadMapYears('cs')
         roadMapYearIT=self.getRoadMapYears('it')
 
@@ -414,14 +424,6 @@ class DatabaseModel:
             print("\n\nPracDuties Duties lust ::  \n\n---------------->",pracDuties)
         #save duties in DB
         self.savePracticalDuties(pracDuties)
-
-
-            # if(st==1):
-            #     pracDuties=self.getCollegeCoursesDutiesTheorey(college[0],btachRdSem,departmentsList)
-            #     st=st+1
-            # else:
-            #     pracDuties=self.getCollegeCoursesDutiesTheorey(college[0],btachRdSem,departmentsList,pracDuties)
-            # print("\n\ntheerryy Duties lust ::  \n\n---------------->",pracDuties)
 
 
 
@@ -662,6 +664,46 @@ class DatabaseModel:
                     cursor.close()
 
 
+    def getTeacherId(self,acId,dept,crsCode):
+        try:
+            print("In get practical duty id ",acId,dept,crsCode)
+            if self.connection!=None:
+                cursor=self.connection.cursor()
+                query="select examiner_id from practical_duty where "\
+               " ac_id=%s and rd_dept=%s and rd_crs_code=%s;"
+                
+                args=(acId,dept,crsCode)
+                cursor.execute(query,args)
+                exmId=cursor.fetchall()
+                print("examId Id list -->",exmId)
+                return exmId[0]
+        except Exception as e:
+                print("Exception in  get examiner id ",str(e))
+        finally:
+                if cursor!=None:
+                    cursor.close()
+
+    
+    def getTeacherDetail(self,examinerId):
+        try:
+            print("In get teacher detail  ",examinerId)
+            if self.connection!=None:
+                cursor=self.connection.cursor()
+                query="select e.examiner_id,u.usr_name,u.usr_email,e.institution, "\
+                    " u.usr_profile_pic from users u , examiner e where "\
+                    "e.user_id=u.usr_id and e.examiner_id=%s"
+                
+                args=(examinerId,)
+                cursor.execute(query,args)
+                teacher=cursor.fetchall()
+                print("teacher detail list -->",teacher)
+                return teacher[0]
+        except Exception as e:
+                print("Exception in  get examiner id ",str(e))
+        finally:
+                if cursor!=None:
+                    cursor.close()
+
 
 
     def getCollegeCourses(self,clgId,dept):
@@ -767,14 +809,14 @@ class DatabaseModel:
                 cursor.close()
 
 
-    def getAdminNotifications(self):
+    def getAdminNotificationsPrac(self):
         try:
             print("In get admin ntfs")
             if self.connection!=None:
                 cursor=self.connection.cursor()
                 query="select examiner_id,prac_duty_id,prac_duty_status,prac_info,ac_id, "\
                     " rd_crs_code from practical_duty where prac_duty_status in(2,3) and "\
-                        " prac_ntf_status=2"
+                        " prac_ntf_status=1"
                 cursor.execute(query)
                 ntfs=cursor.fetchall()
                 print("notification list -->",ntfs)
@@ -823,6 +865,532 @@ class DatabaseModel:
             if cursor!=None:
                 cursor.close()
 
+    
+    ############################################3###################################
+
+    def onDutyExaminers(self):
+        try:
+            if self.connection!=None:
+                cursor=self.connection.cursor()
+                # where u.usr_active_status=true and
+                cursor.execute("select examiner_id from exam_duty;")
+                onDutyExmnrs=cursor.fetchall()
+                return onDutyExmnrs
+        except Exception as e:
+                print("Exception in onDutyExaminers",str(e))
+        finally:
+                if cursor!=None:
+                    cursor.close()
+    
+    def getExaminerNameAccordingToCourseSelection(self,courseName):
+        
+        try:
+            if self.connection!=None:
+                cursor=self.connection.cursor()
+                query="select u.usr_name AS name,u.usr_email,e.examiner_id from users u "\
+                "JOIN public.examiner e ON u.usr_id=e.user_id JOIN "\
+				"public.examiner_courses ec ON ec.examiner_id=e.examiner_id " \
+				"where u.usr_active_status=true and  e.availability=true and ec.examiner_crs_name=%s "\
+				"order by e.ranking desc;"
+                args=(courseName,)
+                # where u.usr_active_status=true and
+                cursor.execute(query,args)
+                rankedExaminers=cursor.fetchall()
+                onDutyExmnrs = self.onDutyExaminers()
+                NameList = []
+                for re in rankedExaminers:
+                    if onDutyExmnrs.__len__() != 0:
+                        for tup in onDutyExmnrs:
+                            if re[2] not in tup:
+                                NameList.append(str(re[2])+"_"+re[0])
+                    else:
+                         NameList.append(str(re[2])+"_"+re[0])
+
+                print("Name list : ",NameList)
+                return NameList
+        except Exception as e:
+                print("Exception in getRankedExaminer",str(e))
+        finally:
+                if cursor!=None:
+                    cursor.close()
+    
+    def findCrsDetail(self,id):
+        try:
+            if self.connection!=None:
+                self.cursor=self.connection.cursor()
+                query ="Select * from roadmap where rd_id = %s;"
+                arg =(id,)
+                self.cursor.execute(query,arg)
+                crs_code=self.cursor.fetchone()
+                return crs_code
+        except Exception as e:
+                print("Exception in getting findCrsDetail",str(e))
+        finally:
+                if self.cursor!=None:
+                    self.cursor.close()
+
+    def CreateDuty(self,List):
+        try:
+            if self.connection!=None:
+                cursor=self.connection.cursor()
+                # exam_id=List[0], rd_id = List[4],rd_dept=List[2],rd_year=List[3]
+                # deadline = datetime.date.today() + datetime.timedelta(days=15)
+                query="INSERT INTO public.exam_duty( "\
+                      "examiner_id,  status_req, rd_id, rd_dept, rd_year, rd_crs_code) "\
+                      "VALUES (%s, %s, %s, %s, %s, %s);"
+                # duty_status =  0 for notAssigned, 1 for assigned, 2 for accepted, 3 for rejected
+                args=(List[0], 0,List[4],List[2],List[3],self.findCrsDetail(List[4])[4])
+                cursor.execute(query,args)
+                self.connection.commit()
+                query = "select exam_duty_id from exam_duty where rd_id = %s;"
+                args = (List[4],)
+                cursor.execute(query,args)
+                id = cursor.fetchone()
+                return id[0]
+        except Exception as e:
+                print("Exception in Creating Duty",str(e))
+        finally:
+                if cursor!=None:
+                    cursor.close()
+
+    def SendDuty(self,id):
+        try:
+            if self.connection!=None:
+                cursor=self.connection.cursor()
+                # exam_id=List[0], rd_id = List[4],rd_dept=List[2],rd_year=List[3]
+                deadline = datetime.date.today() + datetime.timedelta(days=15)
+                query= "UPDATE exam_duty SET status_req = 1, request_date = %s, paper_upload_deadline = %s, result_upload_deadline = %s WHERE exam_duty_id = %s;"
+                # duty_status =  0 for notAssigned, 1 for assigned, 2 for accepted, 3 for rejected
+                args=(datetime.date.today(),(datetime.date.today() + datetime.timedelta(days=30)), (datetime.date.today() + datetime.timedelta(days=35)), id)
+                cursor.execute(query,args)
+                self.connection.commit()
+                self.SendReqforDuty(id)
+                return "True"
+        except Exception as e:
+                print("Exception in Sending Duty",str(e))
+        finally:
+                if cursor!=None:
+                    cursor.close()
+
+    def GetCurrentYear(self):
+        import datetime
+        today = datetime.date.today()
+        year = today.strftime("%Y")
+        return year
+    
+    def GetCurrentMonth(self):
+        import datetime
+        today = datetime.date.today()
+        month = today.strftime("%M")
+        return month
+    
+    def GetCurrentFollowedRoadMapYear(self):
+        try:
+            if self.connection!=None:
+                self.cursor=self.connection.cursor()
+                currYear = self.GetCurrentYear()
+                print(currYear)
+                lastYear=int(currYear)-3
+                strLastYear=str(lastYear)
+
+                print(lastYear)
+                self.cursor.execute("""Select DISTINCT batch_rd_year from batch_enrollment where date_part('year', to_date(batch_year_date, 'DD/MM/YYYY')) BETWEEN %s and %s; """, (strLastYear,currYear))
+                roadmapList=self.cursor.fetchall()
+                return roadmapList
+
+        except Exception as e:
+                print("Exception in getting roadmap",str(e))
+        finally:
+                if self.cursor!=None:
+                    self.cursor.close()
+
+    def GetCurrentBatchesXyear(self):
+        try:
+            # print("In GetCurrentBatchesXyear calc")
+            if self.connection!=None:
+                self.cursor=self.connection.cursor()
+                currYear = self.GetCurrentYear()
+                # print(type(currYear))
+                lastYear=int(currYear)-3
+                # print(str(lastYear))
+                self.cursor.execute("""Select date_part('year', to_date(batch_year_date, 'DD/MM/YYYY')) from batch_enrollment where date_part('year', to_date(batch_year_date, 'DD/MM/YYYY')) BETWEEN %s and %s; """, (lastYear,currYear))
+                currentBatches=self.cursor.fetchall()
+                # print(roadmapList)
+                return currentBatches
+
+        except Exception as e:
+                print("Exception in getting roadmap",str(e))
+        finally:
+                if self.cursor!=None:
+                    self.cursor.close()
+
+    def GetDepartments(self):
+        try:
+            if self.connection!=None:
+                self.cursor=self.connection.cursor()
+                self.cursor.execute("Select dep_name from departments;")
+                deptList=self.cursor.fetchall()
+                return deptList
+        except Exception as e:
+                print("Exception in getting departments",str(e))
+        finally:
+                if self.cursor!=None:
+                    self.cursor.close()
+
+    def getFollowedRoadMapByCurrentBatches(self):
+        # print("In getFollowedRoadMapByCurrentBatches")
+        #2020
+        CurrentFollowedRoadMapYear = self.GetCurrentFollowedRoadMapYear()
+        #(6,4,2)
+        CurrentSemester = self.getSemester()
+        #(cs,it)
+        CurrentDept = self.GetDepartments()
+
+        years_string = ", ".join("'" + str(x[0]) + "'"for x in CurrentFollowedRoadMapYear)
+        departments_string = ", ".join("'{}'".format(x[0].lower()) for x in CurrentDept)
+        semesters_string = ", ".join("{}".format(int(x)) for x in CurrentSemester)
+        # print(years_string)
+        # print(departments_string)
+        # print(semesters_string)
+        # RoadMapIDList = None
+        try:
+            if self.connection!=None:
+                self.cursor=self.connection.cursor()
+                self.cursor.execute("SELECT * FROM roadmap WHERE rd_year IN ({}) AND rd_dept IN ({}) AND rd_semester IN ({}) and rd_prac_status = 0;".format(years_string, departments_string, semesters_string))
+                RoadMapIDList=self.cursor.fetchall()
+                return RoadMapIDList
+        except Exception as e:
+            print("Exception in getting roadmapID",str(e))
+        finally:
+                if self.cursor!=None:
+                    self.cursor.close()
+        
+    def getSemester(self):
+        CurrentBatch = self.GetCurrentBatchesXyear()
+        CurrentYear = self.GetCurrentYear()
+        CurrentMonth = int(self.GetCurrentMonth())
+        CurrentSemesters = []
+        listCompletedYearXsems = []
+        for year in CurrentBatch:
+            listCompletedYearXsems.append(2*(int(CurrentYear) - int(year[0])))
+        if(CurrentMonth >= 10 or CurrentMonth == 1):
+            for sem in listCompletedYearXsems:
+                CurrentSemesters.append(int(sem)-1)
+        elif(CurrentMonth > 1 or CurrentMonth <= 7):
+            CurrentSemesters = listCompletedYearXsems
+        return CurrentSemesters
+ 
+    def getNotAssignedDuties(self):
+        try:
+            if self.connection!=None:
+                self.cursor=self.connection.cursor()
+                self.cursor.execute("select ed.exam_duty_id, u.usr_name,u.usr_email,rd.rd_crs_name,rd.rd_semester,rd.rd_dept from users u "\
+                    "JOIN examiner e ON u.usr_id=e.user_id JOIN exam_duty ed "\
+                    "ON e.examiner_id=ed.examiner_id JOIN roadmap rd ON "\
+                    "rd.rd_id = ed.rd_id where ed.status_req = 0;")
+                dutyList=self.cursor.fetchall()
+                print("Duty list : ",dutyList)
+                return dutyList
+        except Exception as e:
+                print("Exception in getting duties",str(e))
+        finally:
+                if self.cursor!=None:
+                    self.cursor.close()
+    
+    def getAllDuties(self):
+        try:
+            if self.connection!=None:
+                self.cursor=self.connection.cursor()
+                self.cursor.execute("select ed.exam_duty_id, u.usr_name,u.usr_email,rd.rd_crs_name,rd.rd_semester,rd.rd_dept,ed.status_req from users u "\
+                    "JOIN examiner e ON u.usr_id=e.user_id JOIN exam_duty ed "\
+                    "ON e.examiner_id=ed.examiner_id JOIN roadmap rd ON "\
+                    "rd.rd_id = ed.rd_id where ed.status_req != 0;")
+                dutyList=self.cursor.fetchall()
+                return dutyList
+        except Exception as e:
+                print("Exception in getting duties",str(e))
+        finally:
+                if self.cursor!=None:
+                    self.cursor.close()
+
+    def getCoursesName(self,department,year):
+        
+        List = self.getFollowedRoadMapByCurrentBatches()
+        CoursesList = []
+        try:
+            if self.connection!=None:
+                cursor=self.connection.cursor()
+                cursor.execute("select rd_id from exam_duty;")
+                RoadMapIDList=cursor.fetchall()
+                for rd in List:
+                    if rd[1] == department and rd[3] == year:
+                        if RoadMapIDList.__len__() != 0:
+                            for tup in RoadMapIDList:
+                                if rd[0] not in tup:
+                                    CoursesList.append(str(rd[0])+"_"+rd[5])
+                        else:
+                            CoursesList.append(str(rd[0])+"_"+rd[5])
+                return CoursesList
+        except Exception as e:
+                print("Exception in getAlreadySentCourses",str(e))
+        finally:
+                if cursor!=None:
+                    cursor.close()
+    
+    def SendReqforDuty(self,examDutyid):
+        try:
+            cursor = self.connection.cursor()
+            query = ("select u.usr_name,u.usr_email,rd.rd_crs_name from users u "\
+                    "JOIN examiner e ON u.usr_id=e.user_id JOIN exam_duty ed "\
+                    "ON e.examiner_id=ed.examiner_id JOIN roadmap rd ON "\
+                    "rd.rd_id = ed.rd_id  where ed.exam_duty_id = %s;")
+            arg=(examDutyid,)
+            cursor.execute(query,arg)
+            exam_duty_one = cursor.fetchone()
+            self.connection.commit()
+            text = """\
+                <html>
+                <body>
+                    <p>Hi <b>{exam_duty_one[0]}</b>,<br><br>
+                    Congratulations You are selected for the role {exam_duty_one[2]}...!!<br>
+                    Show Your willingness<br>
+                    Happy Life :)<br>
+                    <a href="http://127.0.0.1:5000/click/{button_id}">
+                        <button style="background-color: green; color: white; padding: 10px 20px;">Accepted!</button>
+                    </a>
+                      <a href="http://127.0.0.1:5000/click/{button_reject}">
+                        <button style="background-color: red; color: white; padding: 10px 20px;">Rejected!</button>
+                    </a>
+                    </p>
+                </body>
+                </html>
+                """
+            text = MIMEText(text.format(exam_duty_one=exam_duty_one,button_id="Accepted",button_reject="Rejected"),"html")
+            self.mail(exam_duty_one[1],text)
+            print("succeed")
+            return True
+        except Exception as e:
+            print("Exception in sendReq: ", str(e))
+            return False
+   
+    def getExaminerNameAgainstId(self,examinerid):
+            try:
+                if self.connection != None:
+                    cursor = self.connection.cursor()
+                    query = f'''select * from users u JOIN examiner e ON u.usr_id=e."user_id " where  e.examiner_id= %s;'''
+                    arg=(examinerid,)
+                    cursor.execute(query,arg)
+                    exam_duty_one = cursor.fetchone()
+                    self.connection.commit()
+                    return exam_duty_one[1]
+                else:
+                    return False
+            except Exception as e:
+                print("Exception in message: ", str(e))
+                return False
+            finally:
+                if cursor:
+                    cursor.close()
+
+#     # def mail(self,receiver_email,txt):
+#     #     sender_email = "elite.express243@gmail.com"
+#     #     # receiver_email = "bitf19a027@pucit.edu.pk"
+#     #     print(receiver_email)
+#     #     # password = 'fnwxynvngtjesidi'
+#     #     password = "njsopxyyzkkssixt"
+#     #     # message = txt
+#     #     message = MIMEMultipart("alternative")
+#     #     message.attach(txt)
+#     #     message = message.as_string()
+#     #     try:
+#     #         server = smtplib.SMTP("smtp.gmail.com", 587)
+#     #         server.ehlo()
+#     #         server.starttls()
+#     #         server.login(sender_email, password)
+#     #         server.sendmail(sender_email, receiver_email, message)
+#     #         print("Email sent successfully")
+#     #     except Exception as e:
+#     #         print("Failed to send email")
+#     #         print(e)
+#     #     finally:
+#     #         server.quit()
+
+    def mail(self, receiver_email, txt):
+        sender_email = "elite.express243@gmail.com"
+        # receiver_email = "bitf19a027@pucit.edu.pk"
+        print(receiver_email)
+        # password = 'fnwxynvngtjesidi'
+        password = "njsopxyyzkkssixt"
+        # message = txt
+        message = MIMEMultipart("alternative")
+        message.attach(txt)
+        message = message.as_string()
+        server = None  # Initialize server to None
+        try:
+            server = smtplib.SMTP("smtp.gmail.com", 587)
+            server.ehlo()
+            server.starttls()
+            server.login(sender_email, password)
+            server.sendmail(sender_email, receiver_email, message)
+            print("Email sent successfully")
+        except Exception as e:
+            print("Failed to send email")
+            print(e)
+        finally:
+            if server is not None:  # Check if server has a value before calling server.quit()
+                server.quit()
+
+    def ExaminerDetailForDuty(self,examinerid):
+            try:
+                if self.connection != None:
+                    cursor = self.connection.cursor()
+                    query = f'''select u.usr_name,u.usr_email, e.institution  from users u JOIN examiner e ON u.usr_id=e.user_id where  e.examiner_id= %s;'''
+                    arg=(examinerid,)
+                    cursor.execute(query,arg)
+                    examiner = cursor.fetchone()
+                    self.connection.commit()
+                    return examiner
+                else:
+                    return False
+            except Exception as e:
+                print("Exception in ExaminerDetailForDuty: ", str(e))
+                return False
+            finally:
+                if cursor:
+                    cursor.close()
+  
+    def deadlines(self, crs_id, exam_id):
+        try:
+            if self.connection!=None:
+                self.cursor=self.connection.cursor()
+                query = "Select exam_duty_id, deadline from exam_duty where examiner_id = %s and rd_id = %s;"
+                args = (exam_id, crs_id)
+                self.cursor.execute(query,args)
+                deptList=self.cursor.fetchone()
+                return deptList
+        except Exception as e:
+                print("Exception in fetching Deadlines",str(e))
+        finally:
+                if self.cursor!=None:
+                    self.cursor.close()
+    
+    def getDuty(self,id):
+        try:
+            if self.connection!=None:
+                self.cursor=self.connection.cursor()
+                query = "Select examiner_id, rd_id from exam_duty where exam_duty_id = %s;"
+                args = (id,)
+                self.cursor.execute(query,args)
+                dList=self.cursor.fetchone()
+                print("getDuty: ",dList)
+                return dList
+        except Exception as e:
+                print("Exception in fetching Duty",str(e))
+        finally:
+                if self.cursor!=None:
+                    self.cursor.close()
+    
+    def fetchDutyDetail(self, List):
+        #List = [examinerId,Name,dept,roadmapyr,rd_id,courseName]
+        DataList = []
+        examiner = self.ExaminerDetailForDuty(List[0])
+        courseDetail= self.findCrsDetail(List[1])
+        for item in examiner:
+             DataList.append(item)
+        DataList.append(courseDetail[1].upper() +"-"+ str(courseDetail[2])) # dept-semester
+        DataList.append(courseDetail[4] +"-"+ courseDetail[5]) #courseCode-Name
+        print(DataList)
+        return DataList
+        
+    def getRoadMapList(self):
+        
+        if self.connection != None:
+            cursor = self.connection.cursor()
+            try:
+                cursor.execute('select * from public."roadmap"')
+                roadMapList = cursor.fetchall()
+                return roadMapList
+            except Exception as e:
+                print("Exception in checkUserExist", str(e))
+                return NULL
+            finally:
+                if cursor != None:
+                    cursor.close()
+        else:
+            return NULL
+    
+    def getcourse(self, id):
+        
+        if self.connection != None:
+            cursor = self.connection.cursor()
+            try:
+                cursor.execute("select * from public.roadmap where rd_id =  %s;",[id["id"]])
+                course = cursor.fetchone()
+                return course
+            except Exception as e:
+                print("Exception in Fetching Course", str(e))
+                return NULL
+            finally:
+                if cursor != None:
+                    cursor.close()
+        else:
+            return NULL
+# Open a cursor to perform database operations
+    def insertRoadmap(self, roadmap):
+        if self.connection != None:
+                cursor = self.connection.cursor()
+                try:
+                    query = 'INSERT INTO public."roadmap" (rd_dept,rd_semester,rd_year,rd_crs_code,rd_crs_name,rd_prac_status,rd_crs_hr,rd_crs_book,rd_crs_outline) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)'
+                    args = ('usma', '12345', '32202-3561801-6', 'xyz.png', 'lahore', 'usma@gmail.com', 'true', 'xyzz', 'male')
+                    cursor.execute(query, args)
+                    self.connection.commit()
+                    return True
+                except Exception as e:
+                    print("Exception in insertRoadmap", str(e))
+                    return False
+                finally:
+                    if cursor != None:
+                        cursor.close()
+        else:
+                return False
+    
+    def updateRoadmap(self, dept, course_name, course_code, ID=240):
+        if self.connection != None:
+            cursor = self.connection.cursor()
+            try:
+                query = f'''update public."roadmap" set rd_dept = {dept}, rd_crs_name = {course_name}, rd_crs_code = '{course_code}' where  rd_id = {ID};'''
+                cursor.execute(query)
+                self.connection.commit()
+                return True
+                
+            except Exception as e:
+                print("Exception in updateRoadmap", str(e))
+                return False
+            finally:
+                if cursor:
+                    cursor.close()
+        else:
+            return False
+    
+    def deleteCourse(self, ID=240):
+        if self.connection != None:
+            cursor = self.connection.cursor()
+            try:
+                query = f'delete from public."roadmap" where rd_id = {ID};'
+                cursor.execute(query)
+                self.connection.commit()
+                return True
+            except Exception as e:
+                print("Exception in deleteRoadmap", str(e))
+                return False
+            finally:
+                if cursor:
+                    cursor.close()
+        else:
+            return False
+
+# dbModel= DatabaseModel("ACMS","postgres","aat","localhost");
+# dbModel.GetCurrentFollowedRoadMapYear();
 
         
 

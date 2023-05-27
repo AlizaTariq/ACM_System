@@ -1,0 +1,24 @@
+version: '3'
+
+services:
+  db:
+    image: postgres:12-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: Ayesha@1306
+      POSTGRES_DB: ACMS
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
+  web:
+    build: .
+    command: python app.py
+    volumes:
+      - .:/app
+    ports:
+      - "5000:5000"
+    depends_on:
+      - db
+
+volumes:
+  postgres-data:

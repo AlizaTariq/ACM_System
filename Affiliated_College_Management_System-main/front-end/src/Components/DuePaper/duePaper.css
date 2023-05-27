@@ -1,0 +1,212 @@
+.My-body2{
+    background-color: #fff;
+    margin-top: 100px;
+}
+
+.subject2-box {
+  background-color: #f2f2f2;
+  background-image: url("/src/Static/texture12.jpg");
+  width: 65%;
+  margin-left: 270px;
+  margin-right: 0px;
+  border: 1px solid #e8e8e8;
+  border-radius: 8px;
+  padding: 30px;
+  margin-bottom: 24px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+  /* background-repeat: no-repeat;
+  background-size: cover;
+  background-position: top;  */
+  display: flex;
+  align-items: flex-start; /* Aligns contents to the top */
+  flex-direction: column;
+  justify-content: space-between;
+  position: relative; /* make the subject-box a positioned container */
+}
+
+.subject2-name {
+  color: #fff;
+  font-size: 48px;
+  margin: 0 12px 0;
+  font-family: Poppins;
+  font-weight: 600;
+  margin-top: 80px;
+  margin-bottom: 2px;
+  margin-right: auto;
+  
+}
+
+box-icon[name='calculator'] {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 25px; /* Updated size of box-icon */
+  height: 12px;
+  margin-top: 30px;
+  margin-right: 180px;
+}
+
+box-icon[name='pencil'] {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 25px; /* Updated size of box-icon */
+  height: 12px;
+  margin-top: 80px;
+  margin-right: 280px;
+}
+
+box-icon[name='task'] {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 25px; /* Updated size of box-icon */
+  height: 12px;
+  margin-top: 30px;
+  margin-right: 380px;
+}
+
+box-icon[name='sort-a-z'] {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 25px; /* Updated size of box-icon */
+  height: 12px;
+  margin-top: 10px;
+  margin-right: 110px;
+}
+
+box-icon[name='detail'] {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 25px; /* Updated size of box-icon */
+  height: 12px;
+  margin-top: 150px;
+  margin-right: 80px;
+}
+
+box-icon[name='graduation'] {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 25px; /* Updated size of box-icon */
+  height: 12px;
+  margin-top: 130px;
+  margin-right: 200px;
+}
+
+box-icon[name='time-five'] {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 25px; /* Updated size of box-icon */
+  height: 12px;
+  margin-top: 20px;
+  margin-right: 280px;
+} 
+
+.subject2-description {
+  font-size: 16px;
+  line-height: 1.5;
+  color: #fff;
+  margin-top: auto;
+}
+
+button[type="deatils"] {
+    width: 18%;
+    /*background: rgb(88, 34, 34);*/
+    background: #171d1f;
+    /* background: linear-gradient(to right, #f857a6, #ff5858); */
+    border: 2px solid #fff;
+    margin: 0 15px;
+    height: 50px;
+    font-size: 20px;
+    font-family: poppins;
+    border-radius: 50px;
+    padding: 0 10px;
+    box-sizing: border-box;
+    color: #fff;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    box-shadow: 0 0 20px rgba(0,0,0,0.2);
+    float: right;
+  
+  }
+  
+  button[type="deatils"]:hover {
+    background: rgb(20, 20, 20);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+  }
+  
+  .adjustment2 {
+    /* position: absolute;
+    top: 20%;
+    left: 15%;
+    z-index: 999; */
+    margin-bottom: 20px;
+  }
+
+  .notification_block2 {
+    margin-bottom: 20px;
+    margin-left: 220px;
+    height: max-content;
+    background-color: #e0d6d6;
+    /* background-image: url("/src/Static/grey.jpg"); */
+    /*background-color: #c2b2b2;*/
+    color: #202124;
+    border-width: thin;
+    border-radius: 20px;
+    width: 69%;
+    padding: 20px;
+    box-sizing: border-box;
+    border-top: 1px solid #ccc;
+    outline: none;
+    box-shadow: 0 2px 2px rgba(0, 0, 0, 0.8);
+  }
+  
+  .notification_block2[type=Practical] {
+    margin-bottom: 20px;
+    margin-left: 220px;
+    height: max-content;
+    background-color: #e0d6d6;
+    /*background-image: url("/src/Static/GREEN.jpg");*/
+    color: #44464b;
+    border-width: thin;
+    border-radius: 5px;
+    width: 69%;
+    padding: 15px;
+    box-sizing: border-box;
+    border-top: 1px solid #ccc;
+    outline: none;
+    box-shadow: 0 2px 2px rgba(0, 0, 0, 0.8);
+  }
+  
+  .CourseTitle2 {
+    width: 100%;
+    /* background: black; */
+    margin: 6px 0;
+    padding: 0 10px;
+    /* color: #fff; */
+    font-size: 30px;
+    font-weight: 700;
+    font-family: Poppins;
+    font-style: italic;
+  }
+  
+  .papertype2{
+    text-align:center;
+    font-style: italic;
+    font-size: 22px;
+  }
+  
+  .date2 {
+    text-align: center;
+  }
+
+  @keyframes slideIn {
+    from {opacity: 0; transform: translateY(-100px);}
+    to {opacity: 1; transform: translateY(0);}
+}

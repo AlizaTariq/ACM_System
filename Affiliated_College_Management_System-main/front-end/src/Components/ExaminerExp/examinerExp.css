@@ -1,0 +1,225 @@
+.FormBgEE {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        user-select: none;
+      }
+      
+      .bg-imgEE {
+        /* background-image: url("/src/Static/books2.jpg"); */
+        /* background-color: #2f4050; */
+        background-color: #92785e;
+        height: 100vh;
+        background-size: cover;
+        background-position: center;
+      }
+    
+      .contentEE {
+        margin-top: 0px;
+        /*10px*/
+        border-radius: 10px;
+        position: absolute;
+        top: 57%;
+        left: 50%;
+        z-index: 999;
+        text-align: center;
+        padding: 6px 12px;
+        width: 520px;
+        color: white;
+        transform: translate(-50%, -50%);
+        /* background-image: url("/src/Static/books4.jpg"); */
+        background-color: #917357;
+        background-size: cover;
+        /* background-image: url("/src/Static/login13.jpg"); */
+        /*background: rgb(48, 22, 22);
+        border: 1px solid #fff;
+        /*backdrop-filter: blur(7px);*/
+        box-shadow: 0 0 40px 20px rgba(0, 0, 0, 0.26);
+      }
+    
+      .TableStyleEE {
+        border-collapse: collapse;
+        width: 100%;
+        font-family: 'Poppins', sans-serif;
+        font-weight: 400;
+      }
+      
+      .TableStyleEE th, .TableStyleEE td {
+        text-align: center;
+        padding: 12px;
+        border: 1px solid #ddd;
+      }
+      
+      .TableStyleEE th {
+        background-color: #171d1f;
+        color: #fff;
+        font-weight: 500;
+        text-transform: uppercase;
+      }
+      
+      .TableStyleEE tr:nth-child(even) {
+        background-color: transparent;
+      }
+      
+      .TableStyleEE tr:hover {
+        background-color: rgb(46, 45, 45);
+      }
+      
+      .EditBtnEE {
+        background-color: #4caf50;
+        color: rgb(29, 27, 27);
+        padding: 10px;
+        border-radius: 4px;
+        font-size: 14px;
+        cursor: pointer;
+        font-weight: 600px;
+      }
+      
+      .EditBtnEE:hover {
+        background-color: #3e8e41;
+      }
+      
+      
+      .ButtonsEE {
+        margin-top: 10px;
+        position: absolute;
+        right: 0;
+        margin-right: 80px;
+      }
+    
+        /* The Modal (background) */
+    .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            padding-top: 100px;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgb(0, 0, 0);
+            background-color: rgba(0, 0, 0, 0.4);
+          }
+          
+          /* Modal Content */
+    .modal-content {
+            margin: auto;
+            padding: 0px;
+            border-radius: 20px;
+            background-color: #171d1f;
+            /* background-image: url("/src/Static/fabric3.jpg"); */
+          }
+      
+    .NextBtnEE {
+            width: 250px;
+            position: relative;
+            right: -73px;
+            float: right;
+          }
+          
+    .NextBtnEE button {
+            height: 50px;
+            background-color: rgb(20, 20, 20);
+            color: white;
+            font-size: medium;
+            font-family: sans-serif;
+        transition: all 0.3s ease;
+        box-shadow: 0 0 20px rgba(0,0,0,0.2);
+        border: 2px solid #fff;
+        margin: 10px 15px;
+        height: 50px;
+        font-size: 20px;
+        font-family: poppins;
+          }
+    
+    .NextBtnEE :hover{
+        background: rgb(20, 20, 20);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+    }
+    
+    .maindiv{
+            display: flex;
+            margin: 12px;
+          }
+    
+    .close {
+            color: #aaaaaa;
+            float: right;
+            text-indent: 16.5em;
+            font-size: 28px;
+            font-weight: bold;
+          }
+          
+    .close:hover,
+    .close:focus {
+            color: #000;
+            text-decoration: none;
+            cursor: pointer;
+          }
+          
+    .input-box {
+            width: 100%;
+            background: transparent;
+            border: 1px solid #fff;
+            border-style: inset;
+            height: 32px;
+            border-radius: 20px;
+            padding: 0 10px;
+            box-sizing: border-box;
+            outline: none;
+            text-align: center;
+            color: #fff;
+          }
+    
+    .form-control {
+            background-color: #1f1e1e;
+          }
+      
+    .AddBtnEE {
+            border: none;
+            text-indent: 18em;
+            font-size: 1.5em;
+            color: transparent;
+            background: transparent;
+            outline: 0;
+          }
+          
+    .AddBtnEE input {
+            height: 40px;
+            width: 80px;
+            border: 3px solid rgb(27, 24, 24);
+            font-size: medium;
+            font-family: poppins;
+            background: rgb(170 170 170);
+            border-radius: 10px;
+            margin-top: 1px;
+            margin-bottom: 15px;
+          }
+    
+    .AddBtnEE input:hover {
+      background-color:#161515 ;
+      color: #ffffff;
+      border: 2px solid white;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+          }
+    
+    i span {
+            margin-left: 8px;
+            font-weight: 500;
+            letter-spacing: 1px;
+            font-size: 16px;
+            font-family: "Poppins", sans-serif;
+          }
+          
+    .label_ {
+            color: gray;
+            font-size: 17px;
+          }
+    
+    label{
+      display: inline-block;
+      margin-left: 0px;
+    }

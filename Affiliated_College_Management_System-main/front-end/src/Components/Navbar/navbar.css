@@ -1,0 +1,254 @@
+.Navbar {
+  height: 75px;
+  top: 0%;
+  width: 1500px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #171d1f;
+  box-shadow: 10px 10px 100px black;
+  padding-bottom: 0px;
+  position: fixed;
+  z-index: 9999;
+}
+
+.VerNavbar {
+  position: fixed;
+  padding-top: 0px;
+  top: 75px;
+  left: 0%;
+  bottom: 0;
+  width: 230px;
+  background-color: #171d1f;
+}
+
+.vernav {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  padding: 30px 10px;
+  margin: 8px;
+  left: 0%;
+}
+
+.vernav a {
+  display: block;
+  padding: 10px;
+  width: 202px;
+  color: #DDDBCB;
+  text-decoration: none;
+  font-size: 22px;
+  font-weight: 700;
+  font-family: poppin serif;
+  opacity: 0.9;
+  border-radius: 5px;
+  padding-top: 20px;
+  padding-bottom: 20px;
+  position: relative;
+  margin: 8px;
+}
+
+.vernav a:hover {
+  opacity: 1;
+  background: #0a0a0a;
+}
+
+.vernav a::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 0px;
+  height: 2px;
+  background: #DDDBCB;
+  transition: all .45s ease;
+}
+
+.vernav a:hover::before {
+  width: 100%;
+}
+
+.vernav a.active {
+  background-color: #ddd;
+  color: #333;
+}
+
+.nav-logo {
+  color: #DDDBCB;
+  font-size: 35px;
+  font-weight: 800;
+  font-family: poppin serif;
+  margin: 10px;
+  text-decoration: none;
+}
+
+.nav-items a {
+  color: #DDDBCB;
+  text-decoration: none;
+  font-size: 20px;
+  font-weight: 700;
+  font-family: poppin serif;
+  padding: 20px 25px;
+  margin: 0 5px;
+  position: relative;
+  opacity: 0.9;
+  border-radius: 5px;
+}
+
+.nav-items a:hover {
+  opacity: 1;
+  background: #0a0a0a;
+}
+
+
+.nav-items a::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 0;
+  height: 2px;
+  background: #DDDBCB;
+  transition: all .45s ease;
+}
+
+.nav-items a:hover::before {
+  width: 100%;
+}
+
+.header-btn a {
+  padding: 8px 12px;
+  color: #DDDBCB;
+  font-size: 20px;
+  font-weight: 600;
+  font-family: poppin serif;
+  margin: 20px;
+}
+
+.header-btn .progap {
+  position: relative;
+  /* Add a relative position to the link container */
+  background: #0a0a0a;
+  border: 1px solid rgb(131, 127, 127);
+  border-radius: 50px;
+  transition: all .50s ease;
+  margin: 10px;
+  padding: 15px 12px;
+  padding-top: 20px;
+  padding-bottom: 10px;
+  transition: all .8s ease;
+}
+
+.header-btn .progap:hover {
+  background: #DDDBCB;
+  /* border-radius: 40%; */
+  padding-top: 25px;
+  margin-bottom: 55px;
+  padding-right: 45px;
+  padding-left: 45px;
+  border:1px solid #0a0a0a;
+}
+
+.header-btn .progap:hover box-icon {
+  display: none;
+  /* Hide the box-icon on hover */
+}
+
+.header-btn .progap:nth-child(1):hover::before {
+  content: "Profile";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 25px;
+  font-weight: 800;
+  font-family: poppin serif;
+  color: #0a0a0a;
+  opacity: 0.9;
+}
+
+.header-btn .progap:nth-child(2):hover::before {
+  content: "Recent";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 25px;
+  font-weight: 800;
+  font-family: poppin serif;
+  color: #0a0a0a;
+  opacity: 0.9;
+}
+
+.header-btn .progap:nth-child(3):hover::before {
+  content: "Settings";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 25px;
+  font-weight: 800;
+  font-family: poppin serif;
+  color: #0a0a0a;
+  opacity: 0.9;
+}
+
+.header-btn .progap a {
+  color: #ffffff;
+  text-decoration: none;
+  font-size: 20px;
+  font-weight: 600;
+  font-family: poppin serif;
+}
+
+.header-btn .progap a:hover {
+  text-decoration: none;
+}
+
+.header-btn .signlog {
+  background: #0a0a0a;
+  border: 1px solid #ffffff;
+  border-radius: 5px;
+  transition: all .50s ease;
+  max-height: 500px;
+  box-shadow: 2px 2px 0 0 #11161b, 4px 4px 0 0 white;
+  margin-right: 90px;
+  text-decoration: none;
+}
+
+.header-btn .signlog:hover {
+  background: #115c30;
+  border: 1px solid white;
+  box-shadow: 3px 3px #11161b, 6px 6px 0 0 #DDDBCB;
+  transform: translate(-3px, -3px);
+}
+
+.btnsubmit {
+  border: 0;
+  border-radius: 50%;
+  width: 60px;
+  height: 55px;
+  background: #0a0a0a;
+  cursor: pointer;
+  margin: 5px;
+}
+
+.inputsearch {
+  flex: 1;
+  border: 0;
+  outline: none;
+  padding: 14px;
+  font-size: 18px;
+  color: #cac7ff;
+  font-family: poppin serif;
+  border-radius: 60px;
+  max-width: 400px;
+  background: rgba(225, 225, 225, 0.2);
+  margin-bottom: 10px;
+}
+
+::placeholder {
+  color: #cac7ff;
+  font-family: poppin serif;
+}

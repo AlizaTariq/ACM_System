@@ -1,0 +1,380 @@
+-- Table: public.user
+
+-- DROP TABLE IF EXISTS public."user";
+
+CREATE TABLE IF NOT EXISTS public."user"
+(
+    usr_id integer NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 2147483647 CACHE 1 ),
+    usr_name text COLLATE pg_catalog."default" NOT NULL,
+    usr_password text COLLATE pg_catalog."default" NOT NULL,
+    usr_phoneNo text COLLATE pg_catalog."default" NOT NULL,
+    usr_cnic text COLLATE pg_catalog."default" NOT NULL,
+    usr_profile_pic text COLLATE pg_catalog."default",
+    usr_address text COLLATE pg_catalog."default",
+    usr_email text COLLATE pg_catalog."default" NOT NULL,
+    usr_active_status boolean DEFAULT true,
+    usr_bio text COLLATE pg_catalog."default",
+    usr_gender text COLLATE pg_catalog."default",
+    CONSTRAINT user_pkey PRIMARY KEY (usr_id),
+    CONSTRAINT user_uk1 UNIQUE (usr_cnic),
+    CONSTRAINT user_uk2 UNIQUE (usr_email)
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public."user"
+    OWNER to postgres;
+	
+-- Table: public.examiner
+
+-- DROP TABLE IF EXISTS public.examiner;
+
+CREATE TABLE IF NOT EXISTS public.examiner
+(
+    examiner_id integer NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 2147483647 CACHE 1 ),
+    "user_id " integer NOT NULL,
+    "institution " text COLLATE pg_catalog."default" NOT NULL,
+    availability boolean NOT NULL,
+    ranking integer NOT NULL DEFAULT 0,
+    resume text COLLATE pg_catalog."default" NOT NULL,
+    acceptance_count integer NOT NULL DEFAULT 0,
+    rejection_count integer NOT NULL DEFAULT 0,
+    verified boolean NOT NULL DEFAULT False,
+    CONSTRAINT examiner_pkey PRIMARY KEY (examiner_id),
+    CONSTRAINT fk_user_id FOREIGN KEY ("user_id ")
+        REFERENCES public."user" (usr_id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.examiner
+    OWNER to postgres;
+	
+-- Table: public.admin
+
+-- DROP TABLE IF EXISTS public.admin;
+
+CREATE TABLE IF NOT EXISTS public.admin
+(
+    admin_id integer NOT NULL,
+    usr_id integer NOT NULL,
+    admin_role integer NOT NULL,
+    CONSTRAINT admin_pkey PRIMARY KEY (admin_id),
+    CONSTRAINT admin_fk1 FOREIGN KEY (usr_id)
+        REFERENCES public."user" (usr_id) MATCH FULL
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.admin
+    OWNER to postgres;
+	
+-- Table: public.affiliated_colleges
+
+-- DROP TABLE IF EXISTS public.affiliated_colleges;
+
+CREATE TABLE IF NOT EXISTS public.affiliated_colleges
+(
+    ac_id integer NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 2147483647 CACHE 1 ),
+    ac_year character(4) COLLATE pg_catalog."default",
+    ac_address text COLLATE pg_catalog."default",
+    ac_student_count integer DEFAULT 0,
+    ac_incharge text COLLATE pg_catalog."default",
+    ac_name text COLLATE pg_catalog."default",
+    CONSTRAINT affiliated_colleges_pkey PRIMARY KEY (ac_id)
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.affiliated_colleges
+    OWNER to postgres;
+	
+-- Table: public.roadmap
+
+-- DROP TABLE IF EXISTS public.roadmap;
+
+CREATE TABLE IF NOT EXISTS public.roadmap
+(
+    rd_id integer NOT NULL,
+    rd_dept character(2) COLLATE pg_catalog."default" NOT NULL,
+    rd_semester integer,
+    rd_year character(4) COLLATE pg_catalog."default" NOT NULL,
+    rd_crs_code text COLLATE pg_catalog."default" NOT NULL,
+    rd_crs_name text COLLATE pg_catalog."default",
+    rd_prac_status integer,
+    rd_crs_hr integer,
+    rd_crs_book text COLLATE pg_catalog."default",
+    rd_crs_outlline text COLLATE pg_catalog."default",
+    CONSTRAINT roadmap_pkey PRIMARY KEY (rd_crs_code, rd_year, rd_dept, rd_id)
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.roadmap
+    OWNER to postgres;
+	
+-- Table: public.practical_duty
+
+-- DROP TABLE IF EXISTS public.practical_duty;
+
+CREATE TABLE IF NOT EXISTS public.practical_duty
+(
+    prac_duty_id integer NOT NULL,
+    admin_id integer NOT NULL,
+    prac_date date NOT NULL,
+    prac_time time without time zone,
+    prac_duty_status integer,
+    ac_id integer NOT NULL,
+    prac_ntf_status integer,
+    examiner_id integer,
+    paper_upload_deadline date NOT NULL,
+    result_upload_deadline date NOT NULL,
+    request_date date NOT NULL,
+    paper text COLLATE pg_catalog."default",
+    result text COLLATE pg_catalog."default",
+    rd_id integer NOT NULL,
+    rd_dept character(2) COLLATE pg_catalog."default" NOT NULL,
+    rd_year character(4) COLLATE pg_catalog."default" NOT NULL,
+    rd_crs_code text COLLATE pg_catalog."default" NOT NULL,
+    CONSTRAINT practical_duty_pkey PRIMARY KEY (prac_duty_id),
+    CONSTRAINT pd_fk1 FOREIGN KEY (ac_id)
+        REFERENCES public.affiliated_colleges (ac_id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT pd_fk2 FOREIGN KEY (admin_id)
+        REFERENCES public.admin (admin_id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT pd_fk3 FOREIGN KEY (rd_id, rd_year, rd_dept, rd_crs_code)
+        REFERENCES public.roadmap (rd_id, rd_year, rd_dept, rd_crs_code) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT pd_fk4 FOREIGN KEY (examiner_id)
+        REFERENCES public.examiner (examiner_id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.practical_duty
+    OWNER to postgres;
+
+-- Table: public.exam_duty
+
+-- DROP TABLE IF EXISTS public.exam_duty;
+
+CREATE TABLE IF NOT EXISTS public.exam_duty
+(
+    exam_duty_id integer NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 2147483647 CACHE 1 ),
+    examiner_id integer NOT NULL,
+    request_date date NOT NULL,
+    paper_upload_deadline date NOT NULL,
+    paper_date date NOT NULL,
+    result_upload_deadline date NOT NULL,
+    status_req integer NOT NULL,
+    paper text COLLATE pg_catalog."default",
+    result text COLLATE pg_catalog."default",
+    rd_id integer NOT NULL,
+    rd_dept character(2) COLLATE pg_catalog."default" NOT NULL,
+    rd_year character(4) COLLATE pg_catalog."default" NOT NULL,
+    rd_crs_code text COLLATE pg_catalog."default" NOT NULL,
+    CONSTRAINT " exam_duty_pkey" PRIMARY KEY (exam_duty_id),
+    CONSTRAINT ed_fk1 FOREIGN KEY (rd_id, rd_year, rd_dept, rd_crs_code)
+        REFERENCES public.roadmap (rd_id, rd_year, rd_dept, rd_crs_code) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.exam_duty
+    OWNER to postgres;
+
+-- Table: public.batch_enrollment
+
+-- DROP TABLE IF EXISTS public.batch_enrollment;
+
+CREATE TABLE IF NOT EXISTS public.batch_enrollment
+(
+    batch_id integer NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 2147483647 CACHE 1 ),
+    batch_rd_year text COLLATE pg_catalog."default" NOT NULL DEFAULT '2000'::text,
+    batch_year_date text COLLATE pg_catalog."default" NOT NULL,
+    batch_type text COLLATE pg_catalog."default",
+    CONSTRAINT "SESSION_ENROLLMENT_pkey" PRIMARY KEY (batch_id)
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.batch_enrollment
+    OWNER to postgres;
+	
+-- Table: public.departments
+
+-- DROP TABLE IF EXISTS public.departments;
+
+CREATE TABLE IF NOT EXISTS public.departments
+(
+    dep_id integer NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 2147483647 CACHE 1 ),
+    dep_name text COLLATE pg_catalog."default" NOT NULL,
+    CONSTRAINT departments_pkey PRIMARY KEY (dep_id)
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.departments
+    OWNER to postgres;
+
+-- Table: public.enrolled_department
+
+-- DROP TABLE IF EXISTS public.enrolled_department;
+
+CREATE TABLE IF NOT EXISTS public.enrolled_department
+(
+    edept_id integer NOT NULL,
+    ac_id integer NOT NULL,
+    edept_batch_size integer,
+    edept_std_count integer,
+    CONSTRAINT enrolled_department_pkey PRIMARY KEY (edept_id, ac_id),
+    CONSTRAINT en_dep_fk1 FOREIGN KEY (edept_id)
+        REFERENCES public.departments (dep_id) MATCH FULL
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT en_dept_fk2 FOREIGN KEY (ac_id)
+        REFERENCES public.affiliated_colleges (ac_id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.enrolled_department
+    OWNER to postgres;
+
+-- Table: public.examiner_courses
+
+-- DROP TABLE IF EXISTS public.examiner_courses;
+
+CREATE TABLE IF NOT EXISTS public.examiner_courses
+(
+    examiner_crs_id integer NOT NULL,
+    examiner_id integer NOT NULL,
+    examiner_crs_name text COLLATE pg_catalog."default",
+    CONSTRAINT examiner_courses_pkey PRIMARY KEY (examiner_crs_id),
+    CONSTRAINT ec_fk1 FOREIGN KEY (examiner_id)
+        REFERENCES public.examiner (examiner_id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.examiner_courses
+    OWNER to postgres;
+	
+
+-- Table: public.qualification
+
+-- DROP TABLE IF EXISTS public.qualification;
+
+CREATE TABLE IF NOT EXISTS public.qualification
+(
+    qualification_id integer NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 2147483647 CACHE 1 ),
+    examiner_id integer NOT NULL,
+    degree_title text COLLATE pg_catalog."default" NOT NULL,
+    institution text COLLATE pg_catalog."default" NOT NULL,
+    starting_date text COLLATE pg_catalog."default" NOT NULL,
+    ending_date text COLLATE pg_catalog."default" NOT NULL,
+    transcript text COLLATE pg_catalog."default" NOT NULL,
+    CONSTRAINT "QualificationId_pk" PRIMARY KEY (qualification_id),
+    CONSTRAINT "ExaminerId_Fk" FOREIGN KEY (examiner_id)
+        REFERENCES public.examiner (examiner_id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.qualification
+    OWNER to postgres;
+
+-- Table: public.experience
+
+-- DROP TABLE IF EXISTS public.experience;
+
+CREATE TABLE IF NOT EXISTS public.experience
+(
+    experience_id integer NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 2147483647 CACHE 1 ),
+    examiner_id integer NOT NULL,
+    job_title text COLLATE pg_catalog."default" NOT NULL,
+    organization text COLLATE pg_catalog."default" NOT NULL,
+    reference_email text COLLATE pg_catalog."default",
+    starting_date text COLLATE pg_catalog."default" NOT NULL,
+    ending_date text COLLATE pg_catalog."default" NOT NULL,
+    experiance_letter text COLLATE pg_catalog."default" NOT NULL,
+    CONSTRAINT "experienceId_pk" PRIMARY KEY (experience_id),
+    CONSTRAINT "Examiner_fk" FOREIGN KEY (examiner_id)
+        REFERENCES public.examiner (examiner_id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.experience
+    OWNER to postgres;
+
+-- Table: public.college_review
+
+-- DROP TABLE IF EXISTS public.college_review;
+
+CREATE TABLE IF NOT EXISTS public.college_review
+(
+    cr_id integer NOT NULL,
+    examiner_id integer NOT NULL,
+    cr_complain text COLLATE pg_catalog."default" NOT NULL,
+    ac_id integer NOT NULL,
+    CONSTRAINT college_review_pkey PRIMARY KEY (cr_id),
+    CONSTRAINT cr_fk1 FOREIGN KEY (examiner_id)
+        REFERENCES public.examiner (examiner_id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT cr_fk2 FOREIGN KEY (ac_id)
+        REFERENCES public.affiliated_colleges (ac_id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.college_review
+    OWNER to postgres;
+	
+-- Table: public.teacher_feedback
+
+-- DROP TABLE IF EXISTS public.teacher_feedback;
+
+CREATE TABLE IF NOT EXISTS public.teacher_feedback
+(
+    tf_id integer NOT NULL,
+    prac_duty_id integer NOT NULL,
+    tf_edu_sys text COLLATE pg_catalog."default" NOT NULL,
+    tf_apparatus integer NOT NULL,
+    tf_teacher_attitude integer NOT NULL,
+    tf_rate_duty integer NOT NULL,
+    tf_complain text COLLATE pg_catalog."default" NOT NULL,
+    CONSTRAINT teacher_feedback_pkey PRIMARY KEY (tf_id),
+    CONSTRAINT tf_fk1 FOREIGN KEY (prac_duty_id)
+        REFERENCES public.practical_duty (prac_duty_id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.teacher_feedback
+    OWNER to postgres;

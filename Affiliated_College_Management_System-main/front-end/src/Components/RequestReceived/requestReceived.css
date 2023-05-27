@@ -1,0 +1,143 @@
+.My-body7 {
+    color: rgb(20, 20, 20);
+    background-image: url("/src/Static/texture11.jpg");
+    padding-left: 100px;
+    padding-bottom: 20px
+  }
+  
+  .RequestheaderRR {
+    padding: 10px 0px 6px 8px;
+    margin-left: 140px;
+  }
+  
+  .courseTitleRR {
+    font-weight: 400;
+    font-size: 34px;
+    font-family:'Poppins';
+    float: left;
+    margin-top: 150px;
+    padding-top: 20px;
+    color: rgb(20, 20, 20);
+  }
+  
+  .deadlineRR {
+    font-size: 22px;
+    float: right;
+    padding-top: 80px;
+    color: rgb(20, 20, 20);
+    margin-top: 20px;
+    font-weight: 800px;
+  }
+
+  .requestdateRR {
+    font-size: 22px;
+  }
+  
+  .requestBodyRR {
+    text-align: left;
+    font-size: 16px;
+    font-family: 'Poppins';
+    font-weight: 400;
+    border-radius: 10px;
+    /* left: 50%; */
+    z-index: 999;
+    padding: 60px 82px;
+    box-shadow: 0 0 40px 20px rgb(0 0 0 / 46%);
+    color: rgb(20, 20, 20);
+    margin-left: 170px;
+    width: 1100px;
+    margin-top: 30px;
+  }
+  
+  .outlineTitleRR {
+    display: block;
+    font-size: 27px;
+    font-weight: 500;
+    margin-left: 0px;
+  }
+
+  .uploadPaperRR {
+    border: white;
+    height: fit-content;
+    border-style: solid;
+    border-width: thin;
+    border-radius: 10px;
+    padding: 8px 8px 8px 8px;
+    text-align: center;
+    box-shadow: 0 0 40px 20px rgba(0, 0, 0, 0.26);
+    color: rgb(20, 20, 20);
+  }
+
+.courseTitleRR {
+  font-weight: 400;
+  font-size: 34px;
+  font-family: 'Poppins';
+  float: left;
+  margin-top: 70px;
+}
+
+  button[type="accept"]:nth-child(1) {
+    width: 170px;
+    background: rgb(17, 17, 17);
+    border: 1px solid #fff;
+    margin-right: 45px;
+    margin-top: 25px;
+    margin-left: 890px;
+    height: 50px;
+    font-size: 18px;
+    border-radius: 20px;
+    padding: 0 20px;
+    box-sizing: border-box;
+    outline: none;
+    color: #fff;
+    cursor: pointer;
+    font-family: "Montserrat", sans-serif;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    border: 2px solid #fff;
+    box-shadow: 0 0 20px rgba(0,0,0,0.2);
+  
+  }
+  
+  button[type="accept"]:nth-child(1):hover {
+    background: rgb(5, 4, 4);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+  }
+
+  button[type="accept"]:nth-child(2) {
+    width: 170px;
+    background: rgb(17, 17, 17);
+    border: 1px solid #fff;
+    margin-right: 45px;
+    margin-top: 25px;
+    height: 50px;
+    font-size: 18px;
+    border-radius: 20px;
+    padding: 0 20px;
+    box-sizing: border-box;
+    outline: none;
+    color: #fff;
+    cursor: pointer;
+    font-family: "Montserrat", sans-serif;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    border: 2px solid #fff;
+    box-shadow: 0 0 20px rgba(0,0,0,0.2);
+  
+  }
+  
+  button[type="accept"]:nth-child(2):hover {
+    background: rgb(5, 4, 4);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+  }
+  
+  .form-controlRR {
+    background-color: #1f1e1e;
+  
+  }
