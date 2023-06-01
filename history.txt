@@ -1,0 +1,100 @@
+    1  ls
+    2  git init
+    3  git add .
+    4  git commit -m "Commit"
+    5  git remote
+    6  git remote add origin git@github.com:AlizaTariq/ACM_System.git
+    7  git remote rm origin
+    8  git remote
+    9  git remote add origin git@github.com:AlizaTariq/ACM_System.git
+   10  git remote
+   11  git push
+   12   git push --set-upstream origin master
+   13  gitgit config --global user.name 
+   14  git config --global user.name 
+   15  git config --global user.email
+   16  git credential-manager erase https://github.co
+   17  git credential-manager erase https://github.com
+   18* git 
+   19  git config --global user.email
+   20  git config --global user.email
+   21  git config --global user.password
+   22  git config --global user.name "bcsf19a005@pucit.edu.pk"
+   23  git config --global user.password "ayataliza9999"
+   24  git config --global user.email
+   25  git config --global user.name "AlizaTariq"
+   26  git config --global user.email "bcsf19a005@pucit.edu.pk"
+   27  git config --global user.email
+   28  git push
+   29  git push --set-upstream origin master
+   30  git config --global user.email "bcsf19a005@pucit.edu.pk" --replace-all
+   31  git config --global user.name "AlizaTariq" --replace-all
+   32  git push
+   33  git push --set-upstream origin master
+   34  git remote add origin git@github.com:AlizaTariq/ACM_System.git
+   35  git remote rm origin
+   36  git remote add origin git@github.com:AlizaTariq/ACM_System.git
+   37  git push --set-upstream origin master
+   38  git config --global user.email 
+   39  git config --list
+   40  git config --global user.email "bcsf19a005@pucit.edu.pk"
+   41  git config --global user.email "bcsf19a005@pucit.edu.pk"
+   42  git config --global user.email "bcsf19a005@pucit.edu.pk"
+   43  git config --global user.email "bcsf19a005@pucit.edu.pk"
+   44  git config --global user.email "bcsf19a005@pucit.edu.pk" --replace-all
+   45  git config --global user.name "Aliza Tariq"
+   46  git config --global user.name "Aliza Tariq" --replace-all
+   47  git config --global user.name 
+   48  git config --global user.email
+   49  git push --set-upstream origin master
+   50  git remote -v
+   51  git remote set-url origin git@github.com:AlizaTariq/ACM_System.git
+   52  git remote -v
+   53  git push --set-upstream origin master
+   54  git config --global user.name
+   55  git config user.name
+   56  git config user.email
+   57  git config --global --unset user.name
+   58  git config --global --unset user.email
+   59  git config --global user.name "Aliza Tariq"
+   60  git config --unset-all user.name
+   61  git config --unset-all user.email
+   62  git config --global user.name "Aliza Tariq"
+   63  git config --unset-all user.name
+   64  git config --global user.name "Aliza Tariq"
+   65  git config --global --replace-all user.name "Aliza Tariq"
+   66  git config --global user.name "Aliza Tariq"
+   67  git config --global --replace-all user.name "Aliza Tariq"
+   68  git config --unset-all user.name
+   69  git config --global user.name "Aliza Tariq"
+   70  git config --global user.email "bcsf19a005@pucit.edu.pk"
+   71  git config --global --replace-all user.email "bcsf19a005@pucit.edu.pk"
+   72  git config --unset-all user.email
+   73  git config --global user.email "bcsf19a005@pucit.edu.pk"
+   74  git config user.name
+   75  git config user.email
+   76  git push --set-upstream origin master
+   77  git config user.email
+   78  git config user.name
+   79  ssh -T git@github.com
+   80  git log
+   81  git config --local credential.helper ""
+   82  git push --set-upstream origin master
+   83  git push 
+   84  git push --set-upstream origin master
+   85  git config user.email
+   86  git config user.name
+   87  git config remote.origin.url
+   88  git config --local credential.helper ""
+   89  git config user.name
+   90  git config user.email
+   91  git config --local  user.email
+   92  git config --list
+   93  git push --set-upstream origin master
+   94  ssh-add -l
+   95  git config --local  user.email
+   96  git push --set-upstream origin master
+   97  git log
+   98  git reflog
+   99  history
+  100  history >> history.txt

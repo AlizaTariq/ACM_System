@@ -10,22 +10,21 @@ from flask_jwt_extended import get_jwt_identity
 from flask_jwt_extended import jwt_required
 from flask_jwt_extended import JWTManager
 from flask_cors import CORS
+from flask_jwt_extended import JWTManager, jwt_required, create_access_token, get_jwt_identity
 import os
 
 # Initializing flask app
 app = Flask(__name__)
 
-# Setup the Flask-JWT-Extended extension
-#app.config['ENV_FILE'] = "C:\Users\DELL\Desktop\\'Final Year Project'\\'Deployment Code'\\'ACMS SCHEDULING'\.env"
-app.config["JWT_SECRET_KEY"] = os.environ.get('JWT_SECRET')  # Change this!
-jwt = JWTManager(app)
-
-print("secret jwt key = ",app.config["JWT_SECRET_KEY"])
-
 app.config.from_object("config")
 app.secret_key=app.config["SECRET_KEY"]
 CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
+
+
+app.config['JWT_SECRET_KEY'] = 'super-secret'
+app.config['JWT_SECRET_KEY'] = 'super-secret'
+jwt = JWTManager(app)
 
 
 conn=psycopg2.connect(dbname=app.config["DATABASE"],user=app.config["DB_USER"],
@@ -34,38 +33,8 @@ password=app.config["DB_PASSWORD"],host=app.config["DB_HOST"])
 dbModel= DatabaseModel(app.config["DATABASE"],app.config["DB_USER"],
     app.config["DB_PASSWORD"],app.config["DB_HOST"])
 
-# dbModel.getSemInfo('2020','CS 302','it')
-# dbModel.getCollegeInfo(3)
-# #dbModel.getAllCollege()
-# dbModel.getCollegeCourses(1,'cs')
-# dbModel.getRankedExaminer('Data Structures and Algorithms Lab')
-# dbModel.getPracticalDutyId(1,"cs","CS 103")
-
-#fall spring
-#generate fall drop      
-#spring d
-#dbModel.generateDuties()
-
-#dbModel.getBatchSize(2)
-#dbModel.getCollegeRoadMapYear(1,'1')
-
-#dbModel.getCollegeCourseInfo('2020','cs','CS 103')
-
-#dbModel.getRoadMapYears('it')
-
-#dbModel.generateDuties()
 dbModel.getExaminerName(4)
 
-# print("Roadmap year is")
-# dbModel1.getCollegesList();
-
-# dbModel1.generateDuties();
-
-# dbModel1.GetRoadMapInfo();
-
-#dbModel.getAdminNotifications()
-#dbModel.updateAdminNotifications(859)
-#dbModel.getAdminNotifications()
 
 
 
@@ -109,9 +78,13 @@ def loginData():
     print("admin obj is : ",adminObj)
     userStatus=False;
     userStatus=dbModel.checkAdminExist(adminObj)
+
+    # Creating Access Token
+
     if(userStatus==True):
         session["uemail"]=adminObj.email
         session["upwd"]=adminObj.password
+        access_token = create_access_token(identity=email)
         #return render page
         print("Admin Exist")
         
@@ -125,7 +98,7 @@ def loginData():
 
     #return jsonify({'status': 'success'})
     #return redirect('/notifications')
-    return jsonify(success=True)
+    return jsonify({'success':True,'access_token':access_token})
     #return  render_template('reactView.html')
 
 #()
@@ -133,18 +106,24 @@ def loginData():
 
 @app.route('/generatePracDuties', methods=['GET'])
 def generatePracDuties():
-    # try:
-    #     dbModel.generateDuties();
-    # except Exception as e:
-    #     print("Exception in genrate duties : ",e) 
-    userdata = {
-        'name': 'John',
-        'age': '43',
-        'status': 'Active',
-        'password': 'ABC123',
-        'email': 'john@example.com'
-    }
-    return jsonify(userdata)
+     try:
+        status1=dbModel.checkDutyGenerateStatus()
+        print("Hello World")
+        return jsonify({'success':True})
+        if(status1==True):
+            #dbModel.generateDuties();
+            return jsonify({'success':True})
+        return jsonify({'success':False})
+     except Exception as e:
+         print("Exception in genrate duties : ",e) 
+    # userdata = {
+    #     'name': 'John',
+    #     'age': '43',
+    #     'status': 'Active',
+    #     'password': 'ABC123',
+    #     'email': 'john@example.com'
+    # }
+    # return jsonify(userdata)
 
 
     #return jsonify(success=True)

@@ -426,6 +426,22 @@ class DatabaseModel:
         self.savePracticalDuties(pracDuties)
 
 
+    def checkDutyGenerateStatus(self):
+        try:
+            print("\n\ncheckDutyGenerateStatus")
+            if self.connection!=None:
+                cursor=self.connection.cursor()
+                query="select * from roadmap where rd_prac_status=2"
+                cursor.execute(query)
+                listSt=cursor.fetchall()
+                if listSt==None or len(listSt)==0:
+                    return False
+                return True
+        except Exception as e:
+            print("Exception in checkDutyGenerateStatus",str(e))
+        finally:
+            if cursor!=None:
+                cursor.close()
 
     def getBatchSize(self,clgId):
         try:
