@@ -37,6 +37,7 @@ dbModel.getExaminerName(4)
 
 
 
+#dbModel.SendReqforDuty(1);
 
 # Create a route to authenticate your users and return JWTs. The
 # create_access_token() function is used to actually generate the JWT.

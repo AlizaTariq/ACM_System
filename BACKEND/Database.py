@@ -1153,41 +1153,59 @@ class DatabaseModel:
                 if cursor!=None:
                     cursor.close()
     
+    #Password==lenwtfhxccnpghlt
+
     def SendReqforDuty(self,examDutyid):
         try:
             cursor = self.connection.cursor()
-            query = ("select u.usr_name,u.usr_email,rd.rd_crs_name from users u "\
-                    "JOIN examiner e ON u.usr_id=e.user_id JOIN exam_duty ed "\
-                    "ON e.examiner_id=ed.examiner_id JOIN roadmap rd ON "\
-                    "rd.rd_id = ed.rd_id  where ed.exam_duty_id = %s;")
-            arg=(examDutyid,)
-            cursor.execute(query,arg)
-            exam_duty_one = cursor.fetchone()
-            self.connection.commit()
-            text = """\
-                <html>
-                <body>
-                    <p>Hi <b>{exam_duty_one[0]}</b>,<br><br>
-                    Congratulations You are selected for the role {exam_duty_one[2]}...!!<br>
-                    Show Your willingness<br>
-                    Happy Life :)<br>
-                    <a href="http://127.0.0.1:5000/click/{button_id}">
-                        <button style="background-color: green; color: white; padding: 10px 20px;">Accepted!</button>
-                    </a>
-                      <a href="http://127.0.0.1:5000/click/{button_reject}">
-                        <button style="background-color: red; color: white; padding: 10px 20px;">Rejected!</button>
-                    </a>
-                    </p>
-                </body>
-                </html>
-                """
-            text = MIMEText(text.format(exam_duty_one=exam_duty_one,button_id="Accepted",button_reject="Rejected"),"html")
-            self.mail(exam_duty_one[1],text)
-            print("succeed")
+            # query = ("select u.usr_name,u.usr_email,rd.rd_crs_name from users u "\
+            #         "JOIN examiner e ON u.usr_id=e.user_id JOIN exam_duty ed "\
+            #         "ON e.examiner_id=ed.examiner_id JOIN roadmap rd ON "\
+            #         "rd.rd_id = ed.rd_id  where ed.exam_duty_id = %s;")
+            # arg=(examDutyid,)
+            # cursor.execute(query,arg)
+            # exam_duty_one = cursor.fetchone()
+            # self.connection.commit()
+             # Construct the HTML email content
+            html_content = f"""\
+            <html>
+            <body>
+                <p><b>Dear Amna</b>,<br><br>
+                Congratulations! You are shortlisted for the role <b>Associate Software Engineer</b> at our software house.<br>
+                We got your detail from university. We want to schedule your interview this weekand. Our 
+                goal is to finalize Pucit students this week.So,<br> 
+                Show your willingness by replying to this mail.<br>
+                
+                <br>
+                Thanks You,
+                Senior Talent Acquisition Specialist | Human Resources - ACMS
+                </p>
+            </body>
+            </html>
+        """
+
+            # Create the email message
+            message = MIMEMultipart("alternative")
+            message["Subject"] = "Congratulations on Your Selection"
+            message["From"] = "acms.duty@gmail.com"  # Replace with your email address
+            message["To"] = "bcsf19a047@pucit.edu.pk"  # Replace with the recipient's email address
+
+            # Attach the HTML content to the message
+            html_part = MIMEText(html_content, "html")
+            message.attach(html_part)
+
+            # Send the email using Gmail SMTP
+            with smtplib.SMTP("smtp.gmail.com", 587) as server:
+                server.starttls()
+                server.login("acms.duty@gmail.com", "lenwtfhxccnpghlt")  # Replace with your Gmail credentials
+                server.sendmail(message["From"], message["To"], message.as_string())
+
+            print("Email sent successfully.")
             return True
         except Exception as e:
-            print("Exception in sendReq: ", str(e))
+            print("Exception in SendReqforDuty:", str(e))
             return False
+
    
     def getExaminerNameAgainstId(self,examinerid):
             try:
