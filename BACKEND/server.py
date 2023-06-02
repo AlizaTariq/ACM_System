@@ -13,6 +13,14 @@ from flask_cors import CORS
 from flask_jwt_extended import JWTManager, jwt_required, create_access_token, get_jwt_identity
 import os
 
+
+import smtplib, ssl
+from email.mime.text import MIMEText
+from smtplib import SMTP_SSL as SMTP
+from email.mime.multipart import MIMEMultipart
+from asyncio.windows_events import NULL
+from xml.etree.ElementTree import tostring
+
 # Initializing flask app
 app = Flask(__name__)
 
@@ -110,26 +118,13 @@ def generatePracDuties():
      try:
         status1=dbModel.checkDutyGenerateStatus()
         print("Hello World")
-        return jsonify({'success':True})
         if(status1==True):
-            #dbModel.generateDuties();
+            dbModel.generateDuties();
             return jsonify({'success':True})
+
         return jsonify({'success':False})
      except Exception as e:
          print("Exception in genrate duties : ",e) 
-    # userdata = {
-    #     'name': 'John',
-    #     'age': '43',
-    #     'status': 'Active',
-    #     'password': 'ABC123',
-    #     'email': 'john@example.com'
-    # }
-    # return jsonify(userdata)
-
-
-    #return jsonify(success=True)
-   
-
 
 def makePracDutyObj(list1):
     print("In make prac")
@@ -207,29 +202,18 @@ def getAdminNtfList():
     for list2 in ntfList:
         list1=[]
         exm=dbModel.getExaminerName(list2[0])
+        profilepic=dbModel.getExmProfilePic(list2[0])
         for l1 in list2:
             list1.append(l1)
         list1.append(exm[0])
+        list1.append(profilepic[0])
+        
         notifications.append(list1)
         
     print("ntflist-- ",ntfList)
     print("update ntfList -- ",notifications)
 
     return json.dumps(notifications)
-
-@app.route('/data')
-def get_time():
-    #uList = GetAdminUserInfo()
-   # print(uList)
-    #jsonString = json.dumps(uList)
-    # Returning an api for showing in  reactjs
-    return {
-        'Name':"geek", 
-        "Age":"22",
-        "Date":"88/9/0", 
-        "programming":"python"
-        }
-    #return jsonString
 
 
 @app.route('/')
@@ -266,6 +250,7 @@ def adminLogin():
     return row
     #return {"members":["Member1","Member2","Member3"]}
 
+
 @app.route("/getCrsInfo",methods=['POST','GET'])
 def getCrsInfo():
     data = request.get_json()
@@ -293,6 +278,53 @@ def getCrsInfo():
     }
     return jsonify(userdata)
 
+def sendMailPracDuty(mydata):
+    examinerlist=mydata['examiner']
+    college=mydata['college']
+    dept=mydata['deptValue']
+    courseInfo=mydata['courseValue']
+    html_content = f"""\
+            <html>
+            <body>
+               <body>
+                    <p>Hi <b>{examinerlist[1]}</b>,<br><br>
+                    Congratulations you are selected for the Practical Duty. Details are given below
+                    <br><b>Course</b> : {courseInfo}
+                    <br><b>College</b> : {college}
+                    <br><b>Department</b> : {dept}<br>
+                   
+                    Thanks,<br><br>
+                    Show Your willingness by replying.<br><br>
+                    <a href="https://www.w3schools.com/">
+                        <button style="background-color: green; color: white; padding: 10px 20px;">Accepted!</button>
+                    </a>
+                      <a href="https://www.w3schools.com/">
+                        <button style="background-color: red; color: white; padding: 10px 20px;">Rejected!</button>
+                    </a>
+                    </p>
+                </body>
+            </html>
+        """
+
+    # Create the email message
+    message = MIMEMultipart("alternative")
+    message["Subject"] = "Practical Duty Assignment."
+    message["From"] = "acms.duty@gmail.com"  # Replace with your email address
+    message["To"] = examinerlist[2]  # Replace with the recipient's email address
+
+    # Attach the HTML content to the message
+    html_part = MIMEText(html_content, "html")
+    message.attach(html_part)
+
+    # Send the email using Gmail SMTP
+    with smtplib.SMTP("smtp.gmail.com", 587) as server:
+        server.starttls()
+        server.login("acms.duty@gmail.com", "lenwtfhxccnpghlt")  # Replace with your Gmail credentials
+        server.sendmail(message["From"], message["To"], message.as_string())
+
+    print("Email sent successfully.")
+
+
 @app.route("/sendPracticalDuty",methods=['POST'])
 def sendPracticalDuty():
     print("\n\n\n\tIn send practical function")
@@ -319,6 +351,7 @@ def sendPracticalDuty():
         'success':True,
         'data':data,
     }
+    sendMailPracDuty(data)
     return jsonify(userdata)
 
 @app.route('/updateAdminNtf', methods=['POST'])
@@ -521,7 +554,6 @@ def fetch_random_vegetables():
 
 ###################################################################################
 
-
 @app.route('/getCourseName',methods = ["GET"])
 def getCourseName():
     List = dbModel.getCoursesName()
@@ -530,75 +562,6 @@ def getCourseName():
     if List != None:
         return jsonify(List)
     return "'key': 'empty'"
-
-
-@app.route('/getDataFromReact',methods=["POST"])
-def setTime():
-    if request.method == 'POST':
-        FileName=request.form['fileName']
-        dataOfFile=request.form['ArrayList']
-        DictionaryOfdata=json.loads(dataOfFile)
-        
-        for e in DictionaryOfdata:
-            dbModel.insertRoadmap(json.dumps(e))
-        DictionaryOfdata[0]
-        # print(f'Posting....{FileName}{DictionaryOfdata[0]}{DictionaryOfdata[0]["rd_crs_code"]}')
-        return "Hello"
-    print('Wrong')
-    return "Hello"
-
-@app.route('/set_data',methods = ["GET"])
-def set_data():
-    List = dbModel.getRoadMapList()
-    print("posting......")
-    #print(List)
-    if List != None:
-        return jsonify(List)
-    return "'key': 'empty'"
-
-@app.route('/send_data', methods=["POST","GET"])
-def send_data():
-    course = None
-    id = request.get_json()
-    course = dbModel.getcourse(id)
-    print(course)
-    if request.method == "POST":
-        return jsonify(course)
-    else:
-        return jsonify(course)
-
-@app.route('/put_data', methods=["GET"])
-def put_data():
-    course = None
-    id = request.get_json()
-    course = dbModel.getcourse(id)
-    print(course)
-    return jsonify(course)
-
-@app.route('/getAllCourses',methods = ["GET","POST"])
-def getAllCourses():
-    department = request.get_json()
-    print(department,int((department['roadMapYear']['SelectedRoadMapYear'])))
-    NameList  = dbModel.getCoursesName((department['department']['selectedValue']).lower(),(department['roadMapYear']['SelectedRoadMapYear']))
-   
-    if NameList != None:
-        return jsonify(NameList)
-    return "'key': 'empty'"
-
-
-@app.route('/click/Accepted')
-def button_click():
-    print(f'Button with ID "" was clicked!')
-    return 'Button clicked!'
-
-@app.route('/click/Rejected')
-def button_reject():
-    print(f'Button with ID "" was clicked!')
-    return 'Reject Button clicked!'
-
-###################SEND EXAMINER DUTY
-
-
 
 @app.route('/sendDuty',methods = ["GET","POST"])
 def sendDuty():
@@ -613,6 +576,7 @@ def createDuty():
     print("In Create app.py")
     data = request.get_json()
     List=[]
+    print(data)
     List.append(int(data[0].split("_")[0]))
     List.append(data[0].split("_")[1])
     List.append((data[1]).lower())
@@ -658,7 +622,9 @@ def getAllDuties():
 @app.route('/getAllExaminerName',methods = ["GET","POST"])
 def getAllExaminerName():
     courseName = request.get_json()
-    NameList  = dbModel.getExaminerNameAccordingToCourseSelection(courseName['courseName']['selectedValue'].split("_")[1])
+    if len(courseName)!=0:
+         NameList  = dbModel.getExaminerNameAccordingToCourseSelection(courseName['courseName'].split("_")[1])
+   
     if NameList != None:
         return jsonify(NameList)
     return "'key': 'empty'"
@@ -672,6 +638,69 @@ def getAllData():
         return jsonify(List)
     return "'key': 'empty'" 
 
+@app.route('/getAllCourses',methods = ["GET","POST"])
+def getAllCourses():
+    department = request.get_json()
+    NameList = []
+    NameList  = dbModel.getCoursesName((department['department']).lower(),(department['roadMapYear']))
+    # NameList  = m.getCoursesName(dept,year)
+   
+    if NameList != None:
+        return jsonify(NameList)
+    return "'key': 'empty'"
+
+@app.route('/click/Accepted')
+def button_click():
+    print(f'Button with ID "" was clicked!')
+    return 'Button clicked!'
+
+@app.route('/click/Rejected')
+def button_reject():
+    print(f'Button with ID "" was clicked!')
+    return 'Reject Button clicked!'
+
+@app.route('/getDataFromReact',methods=["POST"])
+def setTime():
+    if request.method == 'POST':
+        FileName=request.form['fileName']
+        dataOfFile=request.form['ArrayList']
+        DictionaryOfdata=json.loads(dataOfFile)
+        
+        for e in DictionaryOfdata:
+            dbModel.insertRoadmap(json.dumps(e))
+        DictionaryOfdata[0]
+        # print(f'Posting....{FileName}{DictionaryOfdata[0]}{DictionaryOfdata[0]["rd_crs_code"]}')
+        return "Hello"
+    print('Wrong')
+    return "Hello"
+
+@app.route('/set_data',methods = ["GET"])
+def set_data():
+    List = dbModel.getRoadMapList()
+    print("posting......")
+    #print(List)
+    if List != None:
+        return jsonify(List)
+    return "'key': 'empty'"
+
+@app.route('/send_data', methods=["POST","GET"])
+def send_data():
+    course = None
+    id = request.get_json()
+    course = dbModel.getcourse(id)
+    print(course)
+    if request.method == "POST":
+        return jsonify(course)
+    else:
+        return jsonify(course)
+
+@app.route('/put_data', methods=["GET"])
+def put_data():
+    course = None
+    id = request.get_json()
+    course = dbModel.getcourse(id)
+    print(course)
+    return jsonify(course)
 
 
 # Running app

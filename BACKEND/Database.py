@@ -48,7 +48,7 @@ class DatabaseModel:
                     return True
                 return False
         except Exception as e:
-            print("Exception in checkAdminUserExist",str(e))
+            print("Exception in --checkAdminUserExist",str(e))
         finally:
             if cursor!=None:
                 cursor.close()
@@ -67,7 +67,7 @@ class DatabaseModel:
                 print("Admin Notifications are : ",adminNotifications)
                 return adminNotifications
         except Exception as e:
-            print("Exception in checkAdminUserExist",str(e))
+            print("Exception in getAdminNotifications",str(e))
         finally:
             if cursor!=None:
                 cursor.close()
@@ -431,12 +431,12 @@ class DatabaseModel:
             print("\n\ncheckDutyGenerateStatus")
             if self.connection!=None:
                 cursor=self.connection.cursor()
-                query="select * from roadmap where rd_prac_status=2"
+                query="select prac_duty_id from practical_duty where prac_duty_status !=2"
                 cursor.execute(query)
                 listSt=cursor.fetchall()
                 if listSt==None or len(listSt)==0:
-                    return False
-                return True
+                    return True
+                return False
         except Exception as e:
             print("Exception in checkDutyGenerateStatus",str(e))
         finally:
@@ -863,6 +863,26 @@ class DatabaseModel:
                 if cursor!=None:
                     cursor.close()
 
+#getExmProfilePic
+    def getExmProfilePic(self,exm_id):
+        try:
+            print("In get profile pic exam")
+            if self.connection!=None:
+                cursor=self.connection.cursor()
+                query="select u.usr_profile_pic from users u where "\
+                " u.usr_id=(select e.user_id from examiner e where "\
+								"	e.examiner_id=%s)"
+                args=(exm_id,)
+                cursor.execute(query,args)
+                examiner=cursor.fetchall()
+                print("Examiner profile pic -->",examiner)
+                return examiner[0]
+        except Exception as e:
+                print("Exception in getting Examiner profile pic : ",str(e))
+        finally:
+                if cursor!=None:
+                    cursor.close()
+
     def updateAdminNotifications(self,practDutyId):
         try:
             print("practDutyId insertion is :",practDutyId)
@@ -1158,37 +1178,44 @@ class DatabaseModel:
     def SendReqforDuty(self,examDutyid):
         try:
             cursor = self.connection.cursor()
-            # query = ("select u.usr_name,u.usr_email,rd.rd_crs_name from users u "\
-            #         "JOIN examiner e ON u.usr_id=e.user_id JOIN exam_duty ed "\
-            #         "ON e.examiner_id=ed.examiner_id JOIN roadmap rd ON "\
-            #         "rd.rd_id = ed.rd_id  where ed.exam_duty_id = %s;")
-            # arg=(examDutyid,)
-            # cursor.execute(query,arg)
-            # exam_duty_one = cursor.fetchone()
-            # self.connection.commit()
-             # Construct the HTML email content
+            query = ("select u.usr_name,u.usr_email,rd.rd_crs_name,rd_crs_code,rd_dept"\
+                ",rd_semester from users u "\
+                    "JOIN examiner e ON u.usr_id=e.user_id JOIN exam_duty ed "\
+                    "ON e.examiner_id=ed.examiner_id JOIN roadmap rd ON "\
+                    "rd.rd_id = ed.rd_id  where ed.exam_duty_id = %s;")
+            arg=(examDutyid,)
+            cursor.execute(query,arg)
+            exam_duty_one = cursor.fetchone()
+            self.connection.commit()
+            #Construct the HTML email content
             html_content = f"""\
             <html>
-            <body>
-                <p><b>Dear Amna</b>,<br><br>
-                Congratulations! You are shortlisted for the role <b>Associate Software Engineer</b> at our software house.<br>
-                We got your detail from university. We want to schedule your interview this weekand. Our 
-                goal is to finalize Pucit students this week.So,<br> 
-                Show your willingness by replying to this mail.<br>
-                
-                <br>
-                Thanks You,
-                Senior Talent Acquisition Specialist | Human Resources - ACMS
-                </p>
-            </body>
+             <body>
+                    <p>Hi <b>{exam_duty_one[0]}</b>,<br><br>
+                    Congratulations you are selected for the Exam Duty. Details are given below
+                    <br><b>Course</b> : {exam_duty_one[2]} - {exam_duty_one[3]}
+                    <br><b>Department</b> : {exam_duty_one[4]}
+                    <br><b>Semester</b> : {exam_duty_one[3]}
+                    <br>
+                   
+                    Thanks,<br><br>
+                    Show Your willingness by replying.<br><br>
+                    <a href="https://www.w3schools.com/">
+                        <button style="background-color: green; color: white; padding: 10px 20px;">Accepted!</button>
+                    </a>
+                      <a href="https://www.w3schools.com/">
+                        <button style="background-color: red; color: white; padding: 10px 20px;">Rejected!</button>
+                    </a>
+                    </p>
+                </body>
             </html>
         """
 
             # Create the email message
             message = MIMEMultipart("alternative")
-            message["Subject"] = "Congratulations on Your Selection"
+            message["Subject"] = "Exam Duty Assignment"
             message["From"] = "acms.duty@gmail.com"  # Replace with your email address
-            message["To"] = "bcsf19a047@pucit.edu.pk"  # Replace with the recipient's email address
+            message["To"] =   exam_duty_one[1]# Replace with the recipient's email address
 
             # Attach the HTML content to the message
             html_part = MIMEText(html_content, "html")
